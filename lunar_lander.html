@@ -64,7 +64,8 @@
   }
   #header-sub {
     font-size: 11px;
-    color: var(--dim);
+    color: var(--text);
+    font-weight: bold;
     margin-left: auto;
     letter-spacing: 0.05em;
   }
@@ -85,7 +86,8 @@
   .stat-label {
     font-size: 9px;
     letter-spacing: 0.1em;
-    color: var(--dim);
+    color: var(--text);
+    font-weight: bold;
     text-transform: uppercase;
     margin-bottom: 4px;
   }
@@ -121,16 +123,16 @@
   #console::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
   .row { white-space: pre-wrap; word-break: break-word; }
-  .row.dim    { color: var(--dim); }
+  .row.dim    { color: var(--text); font-weight: bold; }
   .row.accent { color: var(--accent); }
   .row.warn   { color: var(--warn); }
   .row.danger { color: var(--danger); }
   .row.good   { color: var(--good); }
   .row.bold   { color: var(--text); font-weight: bold; }
-  .row.system { color: var(--dim); font-size: 12px; }
+  .row.system { color: var(--text); font-size: 12px; font-weight: bold; }
 
   /* table rows */
-  .row.table-head { color: var(--dim); border-bottom: 1px solid var(--border); padding-bottom: 2px; margin-bottom: 2px; }
+  .row.table-head { color: var(--text); font-weight: bold; border-bottom: 1px solid var(--border); padding-bottom: 2px; margin-bottom: 2px; }
   .row.table-data { color: var(--text); font-weight: bold; }
 
   /* ── Input area ── */
@@ -145,12 +147,33 @@
     align-items: center;
     gap: 8px;
     background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 8px 12px;
-    transition: border-color 0.2s;
+    border: 2px solid #ffffff;
+    border-radius: 8px;
+    padding: 10px 12px;
+    box-shadow: 0 0 0 2px rgba(255,255,255,0.12);
+    transition: border-color 0.2s, box-shadow 0.2s;
   }
-  #input-row:focus-within { border-color: var(--accent); }
+  #input-row:focus-within {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(126,184,247,0.35);
+  }
+
+  .input-tag {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 10px;
+    border: 1px solid #ffffff;
+    border-radius: 5px;
+    background: #ffffff;
+    color: var(--bg);
+    font-family: var(--display);
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
 
   #prompt {
     color: var(--accent);
@@ -170,7 +193,7 @@
     caret-color: var(--accent);
     min-width: 0;
   }
-  #burn-input::placeholder { color: var(--dim); }
+  #burn-input::placeholder { color: var(--text); font-weight: bold; opacity: 1; }
 
   .btn {
     background: transparent;
@@ -186,8 +209,8 @@
     -webkit-tap-highlight-color: transparent;
   }
   .btn:hover, .btn:active { border-color: var(--accent); color: var(--accent); }
-  .btn.primary { border-color: var(--accent); color: var(--accent); }
-  .btn.primary:hover, .btn.primary:active { background: var(--accent); color: var(--bg); }
+  .btn.primary { border-color: var(--accent); background: var(--accent); color: var(--bg); font-weight: bold; }
+  .btn.primary:hover, .btn.primary:active { background: #9bc9fb; border-color: #9bc9fb; color: var(--bg); }
 
   #btn-row {
     display: flex;
@@ -278,6 +301,7 @@
   <!-- Input -->
   <div id="input-area">
     <div id="input-row">
+      <span class="input-tag">Burn Rate</span>
       <span id="prompt">K&gt;</span>
       <input id="burn-input" type="text" inputmode="numeric" pattern="[0-9]*"
              maxlength="3" autocomplete="off" spellcheck="false"
@@ -308,7 +332,7 @@
   <!-- Scoreboard -->
   <div id="scoreboard" style="
     background:#141824; border-top:1px solid #2a3050;
-    padding:10px 16px; font-size:12px; color:#6b7a99;
+    padding:10px 16px; font-size:12px; color:#d8dff0; font-weight:bold;
     font-family:'Share Tech Mono',monospace; line-height:1.8;">
     🌍 Loading scoreboard...
   </div>
@@ -360,7 +384,7 @@ function renderScoreboard(rows) {
     '🌍 <b style="color:#d8dff0">' + total + '</b> pilots attempted &nbsp;·&nbsp; ' +
     '<span style="color:#60d090"><b>' + safe + '</b> safe (' + pct + '%)</span> &nbsp;·&nbsp; ' +
     '<span style="color:#f07060"><b>' + (total-safe) + '</b> crashes</span><br>' +
-    '<span style="color:#6b7a99">★ perfect:' + perfect +
+    '<span style="color:#d8dff0; font-weight:bold">★ perfect:' + perfect +
     '  ✓ good:' + good + '  ~ poor:' + poor +
     '  ! damage:' + damage + '  !! oxygen:' + oxygen +
     '  ✗ crater:' + crash + '</span>';
