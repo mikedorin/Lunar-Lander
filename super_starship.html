@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Super Starship — Classic Browser Edition</title>
+<style>
+:root{--bg:#02070b;--panel:#07131b;--line:#1d5263;--cyan:#78e8ff;--green:#9cffb4;--amber:#ffd479;--red:#ff7676;--muted:#7da2ad}
+*{box-sizing:border-box} body{margin:0;background:radial-gradient(circle at 50% 20%,#0b1c29 0,#02070b 48%,#000 100%);color:var(--cyan);font-family:Consolas,"Courier New",monospace;min-height:100vh}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(255,255,255,.018),rgba(255,255,255,.018) 1px,transparent 1px,transparent 4px)}
+header{padding:15px 22px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:end;background:#02090ddd}
+h1{margin:0;font-size:clamp(20px,3vw,34px);letter-spacing:.12em;color:#d8f8ff}.sub{color:var(--muted);font-size:12px}
+main{max-width:1400px;margin:auto;padding:14px;display:grid;grid-template-columns:1.15fr .85fr;gap:14px}.panel{border:1px solid var(--line);background:#041018dd;box-shadow:0 0 25px #001 inset;padding:12px}
+.title{font-size:12px;letter-spacing:.16em;color:var(--amber);margin-bottom:9px}.status{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:10px}.stat{border:1px solid #143b49;padding:7px;background:#061720}.stat b{display:block;color:white;font-size:18px}.stat span{font-size:10px;color:var(--muted)}
+#sector{display:grid;grid-template-columns:repeat(8,1fr);gap:4px;aspect-ratio:1;max-height:590px}.cell{border:1px solid #0e3340;background:#031017;display:flex;align-items:center;justify-content:center;min-width:0;position:relative;font-weight:bold;font-size:clamp(10px,1.5vw,19px);cursor:default}.cell .coord{position:absolute;top:2px;left:3px;font-size:7px;color:#28515d}.ent{color:#fff;background:#0d4050}.kling{color:var(--red);text-shadow:0 0 9px red}.base{color:var(--green)}.star{color:var(--amber)}
+.right{display:flex;flex-direction:column;gap:14px}.galaxy{display:grid;grid-template-columns:repeat(8,1fr);gap:3px}.q{border:1px solid #123b48;padding:6px 2px;text-align:center;min-height:39px;font-size:11px;color:#496d77}.q.here{outline:2px solid var(--cyan);color:white}.q.known{color:var(--green)}
+.controls{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.controls button,.modal button{font:inherit;border:1px solid #2c7488;background:#08202a;color:var(--cyan);padding:9px;cursor:pointer}.controls button:hover,.modal button:hover{background:#103947;color:white}.controls button:disabled{opacity:.35}
+#log{height:240px;overflow:auto;border:1px solid #123b48;background:#010609;padding:9px;color:#b9dbe3;font-size:12px;line-height:1.42;white-space:pre-wrap}.red{color:var(--red)}.green{color:var(--green)}.amber{color:var(--amber)}
+.footerBtns{display:flex;gap:8px;margin-top:8px}.footerBtns button{font:inherit;background:transparent;border:0;color:#668f9a;cursor:pointer}
+.modalWrap{position:fixed;inset:0;background:#000b;display:none;align-items:center;justify-content:center;padding:15px;z-index:5}.modal{width:min(620px,100%);max-height:88vh;overflow:auto;background:#06141c;border:1px solid #3d879b;padding:18px;box-shadow:0 0 60px #000}.modal h2{color:white;margin-top:0}.modal label{display:block;color:var(--muted);font-size:12px;margin:12px 0 4px}.modal input,.modal select{width:100%;background:#02090d;border:1px solid #276173;color:white;padding:9px;font:inherit}.row{display:grid;grid-template-columns:1fr 1fr;gap:9px}.actions{display:flex;gap:8px;margin-top:15px;justify-content:flex-end}.device{display:grid;grid-template-columns:1fr 90px;gap:5px;font-size:12px}.device span:nth-child(even){text-align:right}
+@media(max-width:850px){main{grid-template-columns:1fr}.status{grid-template-columns:repeat(2,1fr)}#sector{max-height:none}.controls{grid-template-columns:repeat(2,1fr)}}
+</style></head>
+<body>
+<header><div><h1>SUPER STARSHIP</h1><div class="sub">CLASSIC BASIC-STYLE SPACE STRATEGY · BROWSER EDITION</div></div><div class="sub">GALACTIC COMMAND</div></header>
+<main>
+<section class="panel"><div class="title">SHORT RANGE SENSOR SCAN</div><div class="status" id="status"></div><div id="sector"></div></section>
+<div class="right">
+<section class="panel"><div class="title">CUMULATIVE GALACTIC RECORD</div><div class="galaxy" id="galaxy"></div></section>
+<section class="panel"><div class="title">COMMAND</div><div class="controls">
+<button onclick="nav()">NAV · Navigate</button><button onclick="scan()">SRS · Scan</button><button onclick="lrs()">LRS · Long Range</button>
+<button onclick="phaser()">PHA · Phasers</button><button onclick="torpedo()">TOR · Torpedo</button><button onclick="shield()">SHE · Shields</button>
+<button onclick="damage()">DAM · Damage</button><button onclick="computer()">COM · Computer</button><button onclick="instructions()">Instructions</button>
+</div></section>
+<section class="panel"><div class="title">CAPTAIN'S LOG</div><div id="log"></div><div class="footerBtns"><button onclick="newGame()">NEW MISSION</button><button onclick="document.getElementById('log').innerHTML=''">CLEAR LOG</button></div></section>
+</div></main>
+<div class="modalWrap" id="mw"><div class="modal" id="modal"></div></div>
+<script>
+const RN=["ANTARES","RIGEL","PROCYON","VEGA","CANOPUS","ALTAIR","SAGITTARIUS","POLLUX","SIRIUS","DENEB","CAPELLA","BETELGEUSE","ALDEBARAN","REGULUS","ARCTURUS","SPICA"];
+const DEV=["WARP ENGINES","SHORT RANGE SENSORS","LONG RANGE SENSORS","PHASER CONTROL","TORPEDO TUBES","DAMAGE CONTROL","SHIELD CONTROL","LIBRARY-COMPUTER"];
+let g,known,qx,qy,sx,sy,energy,shields,torps,stardate,startDate,deadline,kRemain,kInitial,bRemain,quad,damageState,ended=false;
+const ri=n=>Math.floor(Math.random()*n), rsector=()=>ri(8);
+function region(x,y){let n=y<4?RN[x]:RN[x+8];return n+" "+["I","II","III","IV"][y%4]}
+function log(s,c=""){let e=document.getElementById("log");e.innerHTML+=`<span class="${c}">${s}</span>\n`;e.scrollTop=e.scrollHeight}
+function empty(){let a=[];for(let x=0;x<8;x++)for(let y=0;y<8;y++)if(!quad.some(o=>o.x==x&&o.y==y))a.push([x,y]);return a[ri(a.length)]}
+function makeQuadrant(){
+ quad=[{type:"E",x:sx,y:sy}]; let d=g[qx][qy];
+ for(let i=0;i<d.k;i++){let p=empty();quad.push({type:"K",x:p[0],y:p[1],hp:Math.floor(200*(.5+Math.random()))})}
+ if(d.b){let p=empty();quad.push({type:"B",x:p[0],y:p[1]})}
+ for(let i=0;i<d.s;i++){let p=empty();quad.push({type:"S",x:p[0],y:p[1]})}
+ known[qx][qy]=code(qx,qy); checkDock(); render();
+}
+function code(x,y){let d=g[x][y];return d.k*100+d.b*10+d.s}
+function newGame(){
+ g=Array.from({length:8},()=>Array(8));known=Array.from({length:8},()=>Array(8).fill(null));kRemain=0;bRemain=2;
+ for(let x=0;x<8;x++)for(let y=0;y<8;y++){let r=Math.random(),k=r>.98?3:r>.95?2:r>.80?1:0,b=Math.random()>.96?1:0,s=ri(8)+1;g[x][y]={k,b,s};kRemain+=k;bRemain+=b}
+ if(!bRemain){let x=ri(8),y=ri(8);g[x][y].b=1;bRemain=1}
+ kInitial=kRemain;startDate=(ri(20)+20)*100;stardate=startDate;deadline=25+ri(10);if(kRemain>deadline)deadline=kRemain+1;
+ qx=ri(8);qy=ri(8);sx=ri(8);sy=ri(8);energy=3000;shields=0;torps=10;damageState=Array(8).fill(0);ended=false;
+ document.getElementById("log").innerHTML="";
+ log("YOUR ORDERS ARE AS FOLLOWS:","amber");log(`DESTROY THE ${kRemain} RAIDER WARSHIPS WHICH HAVE INVADED THE GALAXY.`);log(`COMPLETE THE MISSION BEFORE STARDATE ${startDate+deadline}.`);log(`${bRemain} STARBASE${bRemain==1?"":"S"} AVAILABLE FOR RESUPPLY.`);log(`MISSION BEGINS IN ${region(qx,qy)} QUADRANT.`,"green");makeQuadrant();
+}
+function checkDock(){
+ let b=quad.find(o=>o.type=="B");let dock=b&&Math.abs(b.x-sx)<=1&&Math.abs(b.y-sy)<=1;
+ if(dock){energy=3000;torps=10;shields=0;log("DOCKED AT STARBASE. ENERGY AND TORPEDOES RESTORED.","green")}return dock
+}
+function condition(){if(checkDockSilent())return"DOCKED";if(g[qx][qy].k>0)return"*RED*";if(energy<300)return"YELLOW";return"GREEN"}
+function checkDockSilent(){let b=quad.find(o=>o.type=="B");return !!(b&&Math.abs(b.x-sx)<=1&&Math.abs(b.y-sy)<=1)}
+function render(){
+ document.getElementById("status").innerHTML=[
+ ["STARDATE",stardate.toFixed(1)],["CONDITION",condition()],["QUADRANT",`${qx+1},${qy+1}`],["SECTOR",`${sx+1},${sy+1}`],
+ ["TORPEDOES",torps],["ENERGY",Math.floor(energy)],["SHIELDS",Math.floor(shields)],["RAIDERS LEFT",kRemain]
+ ].map(x=>`<div class=stat><span>${x[0]}</span><b>${x[1]}</b></div>`).join("");
+ let s="";for(let x=0;x<8;x++)for(let y=0;y<8;y++){let o=quad.find(a=>a.x==x&&a.y==y),z=o?o.type:"";let txt=z=="E"?"&lt;*&gt;":z=="K"?"+K+":z=="B"?">!<":z=="S"?"✦":"";let cl=z=="E"?"ent":z=="K"?"kling":z=="B"?"base":z=="S"?"star":"";s+=`<div class="cell ${cl}"><span class=coord>${x+1},${y+1}</span>${txt}</div>`}document.getElementById("sector").innerHTML=s;
+ let m="";for(let x=0;x<8;x++)for(let y=0;y<8;y++)m+=`<div class="q ${x==qx&&y==qy?"here":""} ${known[x][y]!=null?"known":""}" title="${region(x,y)}">${known[x][y]==null?"***":String(known[x][y]).padStart(3,"0")}</div>`;document.getElementById("galaxy").innerHTML=m;
+}
+function show(body){document.getElementById("modal").innerHTML=body;document.getElementById("mw").style.display="flex"}
+function closeM(){document.getElementById("mw").style.display="none"}
+function scan(){if(damageState[1]<0)log("*** SHORT RANGE SENSORS ARE OUT ***","red");else log(`SRS: ${region(qx,qy)} · CONDITION ${condition()} · SECTOR ${sx+1},${sy+1}`);render()}
+function lrs(){if(damageState[2]<0){log("LONG RANGE SENSORS ARE INOPERABLE","red");return}let a=[];for(let x=qx-1;x<=qx+1;x++){let r=[];for(let y=qy-1;y<=qy+1;y++){if(x<0||x>7||y<0||y>7)r.push("***");else{known[x][y]=code(x,y);r.push(String(code(x,y)).padStart(3,"0"))}}a.push(r.join("  "))}log("LONG RANGE SCAN:\n"+a.join("\n"),"green");render()}
+function nav(){if(ended)return;let max=damageState[0]<0?.2:8;show(`<h2>NAVIGATION</h2><div class=row><div><label>COURSE (1–8; 9 = 1)</label><input id=course type=number min=1 max=9 step=.1 value=1></div><div><label>WARP FACTOR (0–${max})</label><input id=warp type=number min=0 max=${max} step=.1 value=.5></div></div><p class=sub>Course: 1=N, 3=E, 5=S, 7=W with fractional courses between.</p><div class=actions><button onclick=closeM()>CANCEL</button><button onclick=doNav()>ENGAGE</button></div>`)}
+function vec(c){if(c==9)c=1;let a=(c-1)*Math.PI/4;return[-Math.cos(a),Math.sin(a)]}
+function doNav(){let c=+document.getElementById("course").value,w=+document.getElementById("warp").value,max=damageState[0]<0?.2:8;if(!(c>=1&&c<=9)||w<=0||w>max)return;closeM();let n=Math.floor(w*8+.5);if(energy-n<0){log("ENGINEERING: INSUFFICIENT ENERGY FOR MANEUVER.","red");return}enemyFire();let [dx,dy]=vec(c),gx=qx*8+sx,gy=qy*8+sy;for(let i=0;i<n;i++){let nx=Math.round(gx+dx),ny=Math.round(gy+dy);if(nx<0||nx>63||ny<0||ny>63){log("GALACTIC COMMAND DENIES PERMISSION TO CROSS GALACTIC PERIMETER.","red");break}gx+=dx;gy+=dy}
+ let nq=Math.floor(Math.max(0,Math.min(63,Math.round(gx)))/8),nyq=Math.floor(Math.max(0,Math.min(63,Math.round(gy)))/8);sx=((Math.round(gx)%8)+8)%8;sy=((Math.round(gy)%8)+8)%8;energy-=n+10;
+ let changed=nq!=qx||nyq!=qy;qx=nq;qy=nyq;stardate+=w<1?Math.floor(w*10)/10:1;repairTick(w);if(changed){log(`NOW ENTERING ${region(qx,qy)} QUADRANT . . .`,"green");makeQuadrant()}else{quad=quad.filter(o=>o.type!="E");quad.push({type:"E",x:sx,y:sy});checkDock();render()}timeCheck()}
+function repairTick(w){let d=Math.min(1,w);for(let i=0;i<8;i++)if(damageState[i]<0){damageState[i]+=d;if(damageState[i]>=0){damageState[i]=0;log(`DAMAGE CONTROL: ${DEV[i]} REPAIR COMPLETED.`,"green")}}if(Math.random()>.8){let i=ri(8);if(Math.random()<.6){damageState[i]-=Math.random()*5+1;log(`DAMAGE CONTROL: ${DEV[i]} DAMAGED`,"red")}else{damageState[i]+=Math.random()*3+1;log(`DAMAGE CONTROL: ${DEV[i]} STATE OF REPAIR IMPROVED`,"green")}}}
+function phaser(){if(ended)return;if(damageState[3]<0)return log("PHASERS INOPERATIVE","red");if(g[qx][qy].k<=0)return log("SCIENCE OFFICER: SENSORS SHOW NO ENEMY SHIPS IN THIS QUADRANT.");show(`<h2>PHASER CONTROL</h2><p>Energy available: <b>${Math.floor(energy)}</b> units</p><label>UNITS TO FIRE</label><input id=pwr type=number min=1 max=${Math.floor(energy)} value=${Math.min(500,Math.floor(energy))}><div class=actions><button onclick=closeM()>CANCEL</button><button onclick=doPhaser()>FIRE</button></div>`)}
+function dist(o){return Math.sqrt((o.x-sx)**2+(o.y-sy)**2)||.5}
+function doPhaser(){let x=+document.getElementById("pwr").value;if(x<=0||x>energy)return;closeM();energy-=x;if(damageState[6]<0)x*=Math.random();let ks=quad.filter(o=>o.type=="K"),h1=Math.floor(x/ks.length);for(let k of [...ks]){let h=Math.floor((h1/dist(k))*(Math.random()+2));if(h>.15*k.hp){k.hp-=h;log(`${h} UNIT HIT ON RAIDER AT SECTOR ${k.x+1},${k.y+1}`);if(k.hp<=0)killK(k)}else log(`SENSORS SHOW NO DAMAGE TO ENEMY AT ${k.x+1},${k.y+1}`)}if(kRemain>0)enemyFire();render();winCheck()}
+function killK(k){log("*** RAIDER DESTROYED ***","green");quad.splice(quad.indexOf(k),1);g[qx][qy].k--;kRemain--;known[qx][qy]=code(qx,qy)}
+function torpedo(){if(ended)return;if(torps<=0)return log("ALL TORPEDOES EXPENDED","red");if(damageState[4]<0)return log("TORPEDO TUBES ARE NOT OPERATIONAL","red");show(`<h2>TORPEDO</h2><label>COURSE (1–9)</label><input id=tc type=number min=1 max=9 step=.1 value=1><div class=actions><button onclick=closeM()>CANCEL</button><button onclick=doTor()>FIRE</button></div>`)}
+function doTor(){let c=+document.getElementById("tc").value;if(c<1||c>9)return;closeM();torps--;energy-=2;let [dx,dy]=vec(c),x=sx,y=sy;log("TORPEDO TRACK:");for(let z=0;z<12;z++){x+=dx;y+=dy;let ix=Math.round(x),iy=Math.round(y);if(ix<0||ix>7||iy<0||iy>7){log("TORPEDO MISSED");enemyFire();render();return}log(`  ${ix+1},${iy+1}`);let o=quad.find(a=>a.x==ix&&a.y==iy&&a.type!="E");if(o){if(o.type=="K")killK(o);else if(o.type=="S")log(`STAR AT ${ix+1},${iy+1} ABSORBED TORPEDO ENERGY.`);else if(o.type=="B"){log("*** STARBASE DESTROYED ***","red");quad.splice(quad.indexOf(o),1);g[qx][qy].b=0;bRemain--;known[qx][qy]=code(qx,qy);log("GALACTIC COMMAND REVIEWING YOUR RECORD TO CONSIDER COURT MARTIAL!","red")}enemyFire();render();winCheck();return}}}
+function shield(){if(damageState[6]<0)return log("SHIELD CONTROL INOPERABLE","red");show(`<h2>SHIELD CONTROL</h2><p>Total available energy: ${Math.floor(energy+shields)}</p><label>UNITS TO SHIELDS</label><input id=sv type=number min=0 max=${Math.floor(energy+shields)} value=${Math.floor(shields)}><div class=actions><button onclick=closeM()>CANCEL</button><button onclick=doShield()>TRANSFER</button></div>`)}
+function doShield(){let x=+document.getElementById("sv").value;if(x<0||x>energy+shields)return;energy=energy+shields-x;shields=x;closeM();log(`DEFLECTOR CONTROL: SHIELDS NOW AT ${Math.floor(shields)} UNITS.`);render()}
+function enemyFire(){let ks=quad.filter(o=>o.type=="K");if(!ks.length)return;if(checkDockSilent()){log("STARBASE SHIELDS PROTECT THE STARSHIP","green");return}for(let k of ks){let h=Math.floor((k.hp/dist(k))*(2+Math.random()));shields-=h;k.hp/=3+Math.random();log(`${h} UNIT HIT ON STARSHIP FROM SECTOR ${k.x+1},${k.y+1}`,"red");if(shields<=0){shields=0;lose("THE STARSHIP HAS BEEN DESTROYED. THE ALLIANCE WILL BE CONQUERED.");return}log(`<SHIELDS DOWN TO ${Math.floor(shields)} UNITS>`);if(h>=20&&Math.random()<=.6&&h/shields>.02){let i=ri(8);damageState[i]-=h/shields+.5*Math.random();log(`DAMAGE CONTROL REPORTS ${DEV[i]} DAMAGED BY THE HIT`,"red")}}}
+function damage(){let rows=DEV.map((d,i)=>`<span>${d}</span><span class="${damageState[i]<0?"red":"green"}">${damageState[i].toFixed(2)}</span>`).join("");show(`<h2>DAMAGE CONTROL</h2><div class=device>${rows}</div>${checkDockSilent()?'<p>Starbase technicians can repair all damaged systems.</p><div class=actions><button onclick=repairAll()>AUTHORIZE REPAIRS</button></div>':''}<div class=actions><button onclick=closeM()>CLOSE</button></div>`)}
+function repairAll(){let n=damageState.filter(x=>x<0).length;if(n){let t=Math.min(.9,n*.1+Math.random()*.5);damageState.fill(0);stardate+=t+.1;log(`STARBASE REPAIRS COMPLETED IN ${(t+.1).toFixed(1)} STARDATES.`,"green")}closeM();render();timeCheck()}
+function computer(){if(damageState[7]<0)return log("COMPUTER DISABLED","red");let ks=quad.filter(o=>o.type=="K");let td=ks.length?ks.map(k=>`raider ${k.x+1},${k.y+1}: direction ${direction(sx,sy,k.x,k.y).toFixed(2)}, distance ${dist(k).toFixed(2)}`).join("<br>"):"No raiders in quadrant.";show(`<h2>LIBRARY-COMPUTER</h2><p><b>STATUS REPORT</b><br>raiders left: ${kRemain}<br>Mission time remaining: ${(startDate+deadline-stardate).toFixed(1)} stardates<br>Starbases: ${bRemain}</p><p><b>TORPEDO DATA</b><br>${td}</p><p><b>REGION</b><br>${region(qx,qy)}</p><div class=actions><button onclick=closeM()>CLOSE</button></div>`)}
+function direction(x1,y1,x2,y2){let a=Math.atan2(y2-y1,-(x2-x1));if(a<0)a+=Math.PI*2;return 1+a/(Math.PI/4)}
+function instructions(){show(`<h2>GALACTIC COMMAND OPERATIONS MANUAL</h2><p>Your mission is to destroy every raider cruiser before the deadline. The galaxy contains 64 quadrants, each divided into 64 sectors.</p><p><b>NAV</b> moves the starship. Courses run 1–8 clockwise: 1 north, 3 east, 5 south, 7 west. Warp × 8 is approximately the number of sectors traveled.</p><p><b>SRS</b> reports the local quadrant. <b>LRS</b> reveals the surrounding nine quadrants. Galactic record codes are hundreds=raiders, tens=starbases, units=stars.</p><p><b>PHA</b> distributes entered phaser energy among raiders. Range reduces effectiveness. <b>TOR</b> fires one photon torpedo on a selected course.</p><p><b>SHE</b> transfers energy between ship and shields. raider fire is absorbed by shields; heavy hits can damage ship systems.</p><p>Move adjacent to a <b class=green>>!&lt; starbase</b> to dock. Docking restores energy and torpedoes and protects the starship from raider fire.</p><p>Symbols: <b>&lt;*&gt;</b> starship · <b class=red>+K+</b> raider · <b class=green>>!&lt;</b> Starbase · <b class=amber>✦</b> Star.</p><div class=actions><button onclick=closeM()>RETURN TO BRIDGE</button></div>`)}
+function timeCheck(){if(stardate>startDate+deadline)lose(`IT IS STARDATE ${stardate.toFixed(1)}. THE MISSION DEADLINE HAS EXPIRED.`)}
+function winCheck(){if(kRemain<=0&&!ended){ended=true;let elapsed=Math.max(.1,stardate-startDate),rating=1000*(kInitial/elapsed)**2;log("CONGRATULATIONS, CAPTAIN! THE LAST RAIDER CRUISER HAS BEEN DESTROYED.","green");log(`YOUR EFFICIENCY RATING IS ${rating.toFixed(1)}`,"amber");show(`<h2>MISSION ACCOMPLISHED</h2><p>The Alliance worlds are secure.</p><p>Efficiency rating: <b>${rating.toFixed(1)}</b></p><div class=actions><button onclick="closeM();newGame()">NEW MISSION</button></div>`)}}
+function lose(msg){if(ended)return;ended=true;log(msg,"red");log(`THERE WERE ${kRemain} RAIDER CRUISERS LEFT AT THE END OF YOUR MISSION.`,"red");show(`<h2>MISSION FAILED</h2><p>${msg}</p><p>${kRemain} raider cruisers remain.</p><div class=actions><button onclick="closeM();newGame()">VOLUNTEER FOR ANOTHER MISSION</button></div>`)}
+newGame();
+</script></body></html>

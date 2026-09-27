@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Stock Market — Creative Computing Browser Edition</title>
+<style>
+:root{--bg:#07100c;--panel:#0b1811;--line:#315b3d;--green:#8cff9e;--bright:#d9ffe0;--amber:#ffd47a;--red:#ff8c86;--muted:#7fa58a}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 50% 0,#17351f 0,#07100c 45%,#020503 100%);color:var(--green);font-family:Consolas,"Courier New",monospace;min-height:100vh}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(255,255,255,.018),rgba(255,255,255,.018) 1px,transparent 1px,transparent 4px)}
+header{border-bottom:1px solid var(--line);padding:17px 22px;background:#07100ce8;display:flex;justify-content:space-between;align-items:end}
+h1{margin:0;color:var(--bright);font-size:clamp(23px,4vw,38px);letter-spacing:.12em}.sub{font-size:11px;color:var(--muted)}
+main{max-width:1350px;margin:auto;padding:14px;display:grid;grid-template-columns:1.25fr .75fr;gap:14px}.panel{border:1px solid var(--line);background:#08150ddd;padding:13px;box-shadow:0 0 28px #0007 inset}.title{font-size:11px;color:var(--amber);letter-spacing:.15em;margin-bottom:10px}
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}.stat{border:1px solid #244a30;background:#0b1d12;padding:8px}.stat span{font-size:9px;color:var(--muted);display:block}.stat b{font-size:18px;color:var(--bright);display:block;margin-top:2px}
+table{width:100%;border-collapse:collapse;font-size:13px}th{text-align:left;color:var(--muted);font-size:10px;border-bottom:1px solid var(--line);padding:8px 5px}td{padding:9px 5px;border-bottom:1px solid #173520}td.num{text-align:right}.up{color:var(--green)}.down{color:var(--red)}.ticker{font-weight:bold;color:white}.company{font-size:10px;color:var(--muted)}
+.trade{width:75px;background:#020905;color:white;border:1px solid #376544;padding:5px;text-align:right;font:inherit}.hint{font-size:10px;color:var(--muted);margin-top:7px}
+button{font:inherit;border:1px solid #4c8058;background:#102719;color:var(--green);padding:9px 12px;cursor:pointer}button:hover{background:#193c25;color:white}button.primary{background:#174b26;color:white}.buttons{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
+#chart{width:100%;height:330px;background:#030905;border:1px solid #23452c;display:block}.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:10px;margin-top:7px}.swatch{display:inline-block;width:10px;height:3px;margin-right:4px;vertical-align:middle}
+#log{height:210px;overflow:auto;white-space:pre-wrap;font-size:11px;line-height:1.45;background:#020704;border:1px solid #203f29;padding:8px;color:#b8d8bf}.right{display:flex;flex-direction:column;gap:14px}
+.rank{font-size:28px;color:var(--amber);text-align:center;padding:8px}.scoreline{text-align:center;color:var(--muted);font-size:11px}.rule{font-size:11px;line-height:1.55;color:#a9c6af}
+.modalWrap{position:fixed;inset:0;background:#000c;display:none;align-items:center;justify-content:center;padding:15px;z-index:10}.modal{width:min(620px,100%);max-height:90vh;overflow:auto;background:#09170e;border:1px solid #568561;padding:20px}.modal h2{margin-top:0;color:white}.modal p,.modal li{font-size:12px;line-height:1.6;color:#b9d2be}.big{font-size:30px;color:var(--bright);text-align:center}.results{display:grid;grid-template-columns:1fr 1fr;gap:8px}.result{border:1px solid #294d32;padding:9px}.result span{display:block;color:var(--muted);font-size:9px}.result b{font-size:17px;color:white}
+@media(max-width:900px){main{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}table{font-size:11px}.company{display:none}#chart{height:260px}}
+</style></head>
+<body>
+<header><div><h1>STOCK MARKET</h1><div class=sub>CREATIVE COMPUTING · MORRISTOWN, NEW JERSEY · 30-DAY CHALLENGE</div></div><div class=sub>1970 SIMULATION</div></header>
+<main>
+<div>
+<section class=panel><div class=title>MARKET SUMMARY</div><div class=stats id=stats></div></section>
+<section class=panel style="margin-top:14px"><div class=title>PORTFOLIO / ORDER TICKET</div>
+<table><thead><tr><th>STOCK</th><th class=num>PRICE</th><th class=num>CHANGE</th><th class=num>SHARES</th><th class=num>VALUE</th><th class=num>TRANSACTION</th></tr></thead><tbody id=stocks></tbody></table>
+<div class=hint>Enter shares to BUY as +NNN or SELL as -NNN. A 1% brokerage fee is charged on the total value of all transactions.</div>
+<div class=buttons><button class=primary onclick=trade()>EXECUTE ORDERS & CLOSE DAY</button><button onclick=clearOrders()>CLEAR ORDERS</button><button onclick=instructions()>INSTRUCTIONS</button><button onclick=newGame()>NEW GAME</button></div>
+</section>
+<section class=panel style="margin-top:14px"><div class=title>PRICE HISTORY</div><canvas id=chart></canvas><div class=legend id=legend></div></section>
+</div>
+<div class=right>
+<section class=panel><div class=title>CHALLENGE</div><div class=rank id=rank>DAY 1 / 30</div><div class=scoreline id=score></div></section>
+<section class=panel><div class=title>MARKET TAPE</div><div id=log></div></section>
+<section class=panel><div class=title>ORIGINAL MARKET RULES</div><div class=rule>
+Five fictional stocks begin near their original BASIC prices. All stocks share a temporary market trend, plus individual random price changes and occasional ±$10 shocks.<br><br>
+A stock can fall to $0 and later rebound. Brokerage costs 1% of every day's total purchases and sales. Your objective is simple: finish Day 30 with as much wealth as possible.
+</div></section>
+</div></main>
+<div class=modalWrap id=mw><div class=modal id=modal></div></div>
+<script>
+const names=[
+ ["IBM","INT. BALLISTIC MISSILES"],
+ ["RCA","RED CROSS OF AMERICA"],
+ ["LBJ","LICHTENSTEIN, BUMRAP & JOKE"],
+ ["ABC","AMERICAN BANKRUPT CO."],
+ ["CBS","CENSURED BOOKS STORE"]
+];
+const colors=["#8cff9e","#78d8ff","#ffd47a","#ff8c86","#d59cff"];
+let prices,holdings,changes,cash,day,history,indexHistory,brokerage,totalVolume,trend,trendDays,n1,n2,i1,i2,e1,e2,finished;
+const rnd=()=>Math.random(), money=x=>"$"+x.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+function round2(x){return Math.round(x*100)/100}
+function log(s,cl=""){let e=document.getElementById("log");e.innerHTML+=`<span class="${cl}">${s}</span>\n`;e.scrollTop=e.scrollHeight}
+function initialTrend(){trend=round2(Math.round((rnd()/10)*100)/100);if(rnd()<=.5)trend=-trend;trendDays=Math.floor(4.99*rnd()+1)}
+function newGame(){
+ prices=[100,85,150,140,110];holdings=[0,0,0,0,0];changes=[0,0,0,0,0];cash=10000;day=1;history=[];indexHistory=[];brokerage=0;totalVolume=0;n1=n2=0;e1=e2=0;finished=false;initialTrend();
+ // BASIC randomizes the initial stock values once before the first portfolio display.
+ updateMarket();
+ history.push([...prices]);indexHistory.push(avg());
+ document.getElementById("log").innerHTML="";
+ log("WELCOME TO THE STOCK MARKET.","up");log("YOU HAVE $10,000 TO INVEST.");log("THE 30-DAY CHALLENGE HAS BEGUN.");
+ render();draw();
+}
+function avg(){return round2(prices.reduce((a,b)=>a+b,0)/5)}
+function stockValue(){return round2(prices.reduce((a,p,i)=>a+p*holdings[i],0))}
+function assets(){return round2(cash+stockValue())}
+function render(){
+ document.getElementById("stats").innerHTML=[
+ ["NYSE AVERAGE",avg().toFixed(2)],["CASH",money(cash)],["STOCK ASSETS",money(stockValue())],["TOTAL ASSETS",money(assets())],["BROKERAGE PAID",money(brokerage)]
+ ].map(x=>`<div class=stat><span>${x[0]}</span><b>${x[1]}</b></div>`).join("");
+ document.getElementById("stocks").innerHTML=names.map((n,i)=>`<tr><td><span class=ticker>${n[0]}</span><div class=company>${n[1]}</div></td><td class=num>${money(prices[i])}</td><td class="num ${changes[i]>=0?"up":"down"}">${changes[i]>=0?"+":""}${changes[i].toFixed(2)}</td><td class=num>${holdings[i]}</td><td class=num>${money(prices[i]*holdings[i])}</td><td class=num><input ${finished?"disabled":""} class=trade id=o${i} type=number step=1 value=0></td></tr>`).join("");
+ document.getElementById("rank").textContent=finished?"MARKET CLOSED":`DAY ${day} / 30`;
+ let best=Number(localStorage.getItem("cc_stock_best")||10000);
+ document.getElementById("score").textContent=`RETURN ${((assets()/10000-1)*100).toFixed(1)}% · PERSONAL BEST ${money(best)}`;
+ document.getElementById("legend").innerHTML=names.map((n,i)=>`<span><i class=swatch style="background:${colors[i]}"></i>${n[0]}</span>`).join("");
+}
+function clearOrders(){for(let i=0;i<5;i++){let e=document.getElementById("o"+i);if(e)e.value=0}}
+function trade(){
+ if(finished)return;
+ let z=Array.from({length:5},(_,i)=>Math.round(Number(document.getElementById("o"+i).value)||0));
+ for(let i=0;i<5;i++)if(-z[i]>holdings[i]){log(`YOU HAVE OVERSOLD ${names[i][0]}; TRY AGAIN.`,"down");return}
+ let purchases=0,sales=0;for(let i=0;i<5;i++){if(z[i]>0)purchases+=z[i]*prices[i];else sales-=z[i]*prices[i]}
+ let value=purchases+sales,fee=round2(.01*value),newCash=round2(cash-purchases-fee+sales);
+ if(newCash<0){log(`YOU HAVE USED ${money(-newCash)} MORE THAN YOU HAVE.`,"down");return}
+ cash=newCash;brokerage=round2(brokerage+fee);totalVolume=round2(totalVolume+value);
+ for(let i=0;i<5;i++)holdings[i]+=z[i];
+ log(`DAY ${day}: ORDERS EXECUTED · TRANSACTIONS ${money(value)} · BROKERAGE ${money(fee)}`);
+ updateMarket();day++;history.push([...prices]);indexHistory.push(avg());
+ log(`********** END OF DAY ${day-1} TRADING **********`,"up");
+ log(`NYSE AVERAGE ${avg().toFixed(2)} · TOTAL ASSETS ${money(assets())}`);
+ if(day>30){finish();return}render();draw();
+}
+function updateMarket(){
+ if(n1<=0){i1=Math.floor(4.99*rnd());n1=Math.floor(4.99*rnd()+1);e1=1}
+ if(n2<=0){i2=Math.floor(4.99*rnd());n2=Math.floor(4.99*rnd()+1);e2=1}
+ n1--;n2--;
+ for(let i=0;i<5;i++){
+   let x=rnd(); let x1=x<=.25?.25:x<=.5?.5:x<=.75?.75:0;
+   let w3=0;if(e1>=1&&i1===i){w3=10;e1=0}if(e2>=1&&i2===i){w3-=10;e2=0}
+   // Preserve BASIC: INT(A*S(I)) + stepped random fraction + INT(3-6*RND+.5) + shock.
+   let c=Math.floor(trend*prices[i])+x1+Math.floor(3-6*rnd()+.5)+w3;
+   c=round2(c);let np=round2(prices[i]+c);
+   if(np<=0){changes[i]=0;prices[i]=0}else{changes[i]=c;prices[i]=np}
+ }
+ trendDays--;if(trendDays<1){trendDays=Math.floor(4.99*rnd()+1);trend=round2(Math.round((rnd()/10)*100)/100);if(rnd()>.5)trend=-trend}
+}
+function finish(){
+ finished=true;let final=assets(),ret=(final/10000-1)*100,best=Number(localStorage.getItem("cc_stock_best")||0);if(final>best)localStorage.setItem("cc_stock_best",String(final));
+ let rank=ret>=100?"WALL STREET LEGEND":ret>=50?"MARKET WIZARD":ret>=20?"SHREWD SPECULATOR":ret>=0?"PRUDENT INVESTOR":ret>=-25?"BRUISED TRADER":"BANKRUPT BARON";
+ let bestStock=0;for(let i=1;i<5;i++)if(history[history.length-1][i]-history[0][i]>history[history.length-1][bestStock]-history[0][bestStock])bestStock=i;
+ log("30-DAY CHALLENGE COMPLETE.","up");log(`FINAL ASSETS: ${money(final)} · RETURN ${ret.toFixed(1)}%`,"up");
+ show(`<h2>MARKET CLOSED</h2><div class=big>${rank}</div><div class=results>
+ <div class=result><span>STARTING WEALTH</span><b>$10,000.00</b></div><div class=result><span>FINAL WEALTH</span><b>${money(final)}</b></div>
+ <div class=result><span>RETURN</span><b>${ret>=0?"+":""}${ret.toFixed(1)}%</b></div><div class=result><span>BROKERAGE PAID</span><b>${money(brokerage)}</b></div>
+ <div class=result><span>TRADING VOLUME</span><b>${money(totalVolume)}</b></div><div class=result><span>BEST MARKET PERFORMER</span><b>${names[bestStock][0]}</b></div>
+ </div><div class=buttons><button class=primary onclick="closeM();newGame()">PLAY AGAIN</button><button onclick=closeM()>VIEW FINAL PORTFOLIO</button></div>`);
+ render();draw();
+}
+function draw(){
+ let c=document.getElementById("chart"),dpr=window.devicePixelRatio||1,w=c.clientWidth,h=c.clientHeight;c.width=w*dpr;c.height=h*dpr;let x=c.getContext("2d");x.scale(dpr,dpr);x.clearRect(0,0,w,h);
+ let vals=history.flat(),max=Math.max(160,...vals)*1.08,min=0,pad=34;
+ x.strokeStyle="#193d25";x.lineWidth=1;x.fillStyle="#65836b";x.font="9px Consolas";
+ for(let j=0;j<=5;j++){let y=pad+(h-2*pad)*j/5;x.beginPath();x.moveTo(pad,y);x.lineTo(w-pad,y);x.stroke();x.fillText((max*(1-j/5)).toFixed(0),3,y+3)}
+ for(let i=0;i<5;i++){x.strokeStyle=colors[i];x.lineWidth=2;x.beginPath();history.forEach((r,j)=>{let px=pad+(w-2*pad)*(history.length==1?0:j/(history.length-1)),py=pad+(h-2*pad)*(1-r[i]/max);j?x.lineTo(px,py):x.moveTo(px,py)});x.stroke()}
+ x.fillStyle="#65836b";x.fillText("DAY 1",pad,h-8);x.fillText(`DAY ${Math.min(day,30)}`,w-pad-40,h-8);
+}
+function show(s){document.getElementById("modal").innerHTML=s;document.getElementById("mw").style.display="flex"}function closeM(){document.getElementById("mw").style.display="none"}
+function instructions(){show(`<h2>HOW TO PLAY</h2><p>You begin with <b>$10,000</b>. Each trading day, enter the number of shares you wish to buy or sell for any of the five stocks. Positive numbers buy; negative numbers sell.</p><p>A <b>1% brokerage fee</b> is charged on the combined dollar value of purchases and sales. You cannot sell shares you do not own, and you cannot spend more cash than you have.</p><p>After you submit your orders, prices move according to the original BASIC simulation: a market-wide trend affects all five stocks, each stock receives a small random change, and occasional large ±$10 events occur.</p><p>The market trend changes periodically. Watching the price-history chart may help you decide whether the market is rising or falling—but the simulation remains unpredictable.</p><p>Your challenge lasts <b>30 trading days</b>. Maximize total assets: cash plus the current value of your stock holdings.</p><p>The original program recommended running for at least ten days to get a “feel” for the market. Good luck!</p><div class=buttons><button onclick=closeM()>RETURN TO MARKET</button></div>`)}
+window.addEventListener("resize",draw);newGame();
+</script></body></html>

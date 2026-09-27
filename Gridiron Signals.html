@@ -1,0 +1,846 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Gridiron Signals</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+:root{
+  --turf-1:#0f2a20;
+  --turf-2:#173e2f;
+  --turf-3:#1f4d3a;
+  --chalk:#f4efe1;
+  --chalk-dim:#c8c2ab;
+  --gold:#f2b705;
+  --gold-dim:#a9820a;
+  --red:#e2544a;
+  --panel:#0c231b;
+  --panel-2:#123528;
+  --line:#2c5443;
+  --ink:#08150f;
+  color-scheme: dark;
+}
+
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  background:
+    repeating-linear-gradient(90deg, var(--turf-2) 0 40px, var(--turf-1) 40px 80px);
+  color:var(--chalk);
+  font-family:'Inter',system-ui,sans-serif;
+  padding-inline:16px;
+  padding-block:24px;
+}
+
+.wrap{max-width:920px;margin:0 auto;}
+
+/* ---------- Header ---------- */
+header{
+  text-align:center;
+  margin-bottom:18px;
+}
+h1{
+  font-family:'Anton',sans-serif;
+  font-weight:400;
+  font-size:clamp(2rem,7vw,3.4rem);
+  letter-spacing:0.04em;
+  margin:0;
+  color:var(--chalk);
+  text-shadow:0 0 18px rgba(242,183,5,0.25), 3px 3px 0 rgba(0,0,0,0.35);
+  text-wrap:balance;
+}
+.subtitle{
+  font-family:'IBM Plex Mono',monospace;
+  color:var(--gold);
+  font-size:0.8rem;
+  letter-spacing:0.2em;
+  text-transform:uppercase;
+  margin-top:6px;
+}
+.hdr-actions{
+  display:flex;justify-content:center;gap:10px;margin-top:14px;flex-wrap:wrap;
+}
+
+/* ---------- Buttons ---------- */
+button{
+  font-family:'Inter',sans-serif;
+  font-weight:600;
+  cursor:pointer;
+  border-radius:8px;
+  border:1px solid var(--line);
+  background:var(--panel-2);
+  color:var(--chalk);
+  padding:10px 16px;
+  font-size:0.92rem;
+  transition:background .15s, transform .1s, border-color .15s;
+}
+button:hover{background:#17402f;border-color:var(--gold-dim);}
+button:active{transform:translateY(1px);}
+button:focus-visible{outline:2px solid var(--gold);outline-offset:2px;}
+button.primary{background:var(--gold);border-color:var(--gold);color:var(--ink);}
+button.primary:hover{background:#ffc933;}
+button.ghost{background:transparent;}
+button.small{padding:6px 11px;font-size:0.8rem;border-radius:6px;}
+button:disabled{opacity:0.4;cursor:not-allowed;}
+
+/* ---------- Panels ---------- */
+.panel{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:18px;
+  margin-bottom:16px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.35);
+}
+.panel h2{
+  font-family:'Anton',sans-serif;
+  font-weight:400;
+  letter-spacing:0.03em;
+  font-size:1.15rem;
+  margin:0 0 12px 0;
+  color:var(--gold);
+}
+
+/* ---------- Setup ---------- */
+.rules{
+  font-size:0.92rem;
+  line-height:1.55;
+  color:var(--chalk-dim);
+}
+.rules p{margin:0 0 10px;}
+.score-limit-row{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:14px;
+}
+.score-limit-row label{font-size:0.85rem;color:var(--chalk-dim);}
+.score-limit-row input[type=number]{
+  width:80px;padding:8px 10px;border-radius:8px;border:1px solid var(--line);
+  background:var(--ink);color:var(--chalk);font-family:'IBM Plex Mono',monospace;font-size:1rem;
+}
+.name-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:10px;}
+.name-field{display:flex;flex-direction:column;gap:4px;flex:1;min-width:140px;}
+.name-field label{font-size:0.78rem;color:var(--chalk-dim);text-transform:uppercase;letter-spacing:0.08em;}
+.name-field input[type=text]{
+  padding:8px 10px;border-radius:8px;border:1px solid var(--line);
+  background:var(--ink);color:var(--chalk);font-family:'Inter',sans-serif;
+}
+
+.chart-tabs{display:flex;gap:8px;margin-bottom:10px;}
+.chart-tabs button{flex:1;}
+.chart-tabs button.active{background:var(--gold);color:var(--ink);border-color:var(--gold);}
+.chart-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
+  gap:6px;font-family:'IBM Plex Mono',monospace;font-size:0.78rem;
+}
+.chart-cell{
+  display:flex;gap:8px;align-items:baseline;
+  background:var(--panel-2);border:1px solid var(--line);border-radius:6px;padding:6px 8px;
+}
+.chart-cell .num{color:var(--gold);font-weight:600;min-width:1.4em;}
+
+/* ---------- Scoreboard ---------- */
+.scoreboard{
+  position:sticky;top:env(safe-area-inset-top,0px);
+  z-index:5;
+  display:grid;grid-template-columns:1fr auto 1fr;
+  align-items:center;gap:10px;
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:14px 16px;
+  margin-bottom:14px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.4);
+}
+.team-score{text-align:center;}
+.team-score .tname{
+  font-family:'Anton',sans-serif;font-size:0.95rem;letter-spacing:0.05em;
+  color:var(--chalk-dim);text-transform:uppercase;
+}
+.team-score.on .tname{color:var(--gold);}
+.team-score .tval{
+  font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:2.1rem;
+  font-variant-numeric:tabular-nums;
+}
+.mid-info{text-align:center;font-family:'IBM Plex Mono',monospace;}
+.mid-info .dd{font-size:0.95rem;color:var(--chalk);}
+.mid-info .poss{font-size:0.75rem;color:var(--gold);margin-top:2px;letter-spacing:0.06em;}
+
+/* ---------- Field ---------- */
+.field-wrap{margin-bottom:14px;}
+.field{
+  position:relative;height:58px;border-radius:8px;overflow:hidden;
+  border:2px solid var(--chalk-dim);
+  background:repeating-linear-gradient(90deg, var(--turf-3) 0 5%, var(--turf-2) 5% 10%);
+}
+.field .goal{
+  position:absolute;top:0;bottom:0;width:3%;
+}
+.field .goal.left{left:0;background:rgba(226,84,74,0.35);border-right:2px solid var(--chalk-dim);}
+.field .goal.right{right:0;background:rgba(242,183,5,0.28);border-left:2px solid var(--chalk-dim);}
+.field .yardline{
+  position:absolute;top:0;bottom:0;width:1px;background:rgba(244,239,225,0.25);
+}
+.field .yardlabel{
+  position:absolute;bottom:2px;transform:translateX(-50%);
+  font-family:'IBM Plex Mono',monospace;font-size:0.6rem;color:var(--chalk-dim);
+}
+.field .ball{
+  position:absolute;top:50%;font-size:1.3rem;transform:translate(-50%,-50%);
+  transition:left .5s ease;
+  filter:drop-shadow(0 2px 3px rgba(0,0,0,0.5));
+}
+.field-caption{
+  display:flex;justify-content:space-between;
+  font-family:'IBM Plex Mono',monospace;font-size:0.7rem;color:var(--chalk-dim);
+  margin-top:4px;
+}
+
+/* ---------- Log ---------- */
+.log{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:0.82rem;line-height:1.55;
+  height:220px;overflow-y:auto;
+  background:var(--ink);border:1px solid var(--line);border-radius:10px;
+  padding:12px 14px;
+  scroll-behavior:smooth;
+}
+.log .ln{white-space:pre-wrap;}
+.log .rule{color:var(--line);}
+.log .hl{color:var(--gold);font-weight:600;}
+.log .alert{color:var(--red);font-weight:600;}
+.log .dim{color:var(--chalk-dim);}
+
+/* ---------- Controls ---------- */
+.controls{min-height:120px;}
+.controls .question{
+  font-family:'IBM Plex Mono',monospace;font-size:0.92rem;margin-bottom:12px;color:var(--chalk);
+}
+.yn-row{display:flex;gap:10px;}
+.yn-row button{flex:1;}
+.play-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
+  gap:8px;margin-bottom:12px;
+}
+.play-btn{
+  text-align:left;font-family:'IBM Plex Mono',monospace;font-weight:500;font-size:0.8rem;
+  display:flex;flex-direction:column;gap:2px;padding:9px 10px;
+}
+.play-btn .pn{color:var(--gold);font-weight:600;}
+.extra-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px;}
+.pass-device{
+  text-align:center;padding:30px 10px;
+}
+.pass-device .icon{font-size:2.4rem;margin-bottom:10px;}
+.pass-device p{font-family:'IBM Plex Mono',monospace;color:var(--chalk-dim);margin-bottom:16px;}
+
+.game-over{text-align:center;padding:10px;}
+.game-over .winner{
+  font-family:'Anton',sans-serif;font-size:2rem;color:var(--gold);
+  text-shadow:0 0 18px rgba(242,183,5,0.35);
+}
+
+footer{
+  text-align:center;font-size:0.72rem;color:var(--chalk-dim);
+  font-family:'IBM Plex Mono',monospace;margin-top:20px;letter-spacing:0.03em;
+}
+footer a{color:var(--gold);}
+
+[hidden]{display:none!important;}
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>GRIDIRON SIGNALS</h1>
+    <div class="subtitle">a browser port of 1978's N.F.U. Football — no fortran used</div>
+    <div class="hdr-actions">
+      <button class="ghost small" id="btn-restart" hidden>Restart Game</button>
+    </div>
+  </header>
+
+  <!-- SETUP SCREEN -->
+  <section id="setup">
+    <div class="panel">
+      <h2>How it works</h2>
+      <div class="rules">
+        <p>Two teams share one device. Each team secretly numbers the same twenty plays in its own order — so a play's number means something different to each side. On offense you call a play by its number; on defense you call a number too, guessing which play it's closest to. The closer your guess lands to the real play, the less ground the offense gains.</p>
+        <p>Standard downs, punts, field goals and kickoffs apply. First team to the score limit wins.</p>
+      </div>
+      <div class="score-limit-row">
+        <label for="score-limit">Score limit</label>
+        <input type="number" id="score-limit" value="21" min="1" max="200">
+        <span class="rules" style="margin:0;">points wins the game</span>
+      </div>
+      <div class="name-row">
+        <div class="name-field"><label for="name1">Team 1 name</label><input type="text" id="name1" placeholder="Team 1" maxlength="16"></div>
+        <div class="name-field"><label for="name2">Team 2 name</label><input type="text" id="name2" placeholder="Team 2" maxlength="16"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Play charts</h2>
+      <div class="chart-tabs">
+        <button id="tab1" class="active">Team 1's chart</button>
+        <button id="tab2">Team 2's chart</button>
+      </div>
+      <p class="rules">Whoever is playing that team should be the only one looking when it's their turn to call a play.</p>
+      <div class="chart-grid" id="chart-display"></div>
+    </div>
+
+    <div style="text-align:center;margin-top:6px;">
+      <button class="primary" id="btn-start" style="font-size:1.05rem;padding:13px 28px;">Kick Off ▶</button>
+    </div>
+  </section>
+
+  <!-- GAME SCREEN -->
+  <section id="game" hidden>
+    <div class="scoreboard">
+      <div class="team-score" id="score1">
+        <div class="tname" id="sb-name1">TEAM 1</div>
+        <div class="tval" id="sb-val1">0</div>
+      </div>
+      <div class="mid-info">
+        <div class="dd" id="sb-dd">—</div>
+        <div class="poss" id="sb-poss">&nbsp;</div>
+      </div>
+      <div class="team-score" id="score2">
+        <div class="tname" id="sb-name2">TEAM 2</div>
+        <div class="tval" id="sb-val2">0</div>
+      </div>
+    </div>
+
+    <div class="field-wrap">
+      <div class="field" id="field">
+        <div class="goal left"></div>
+        <div class="goal right"></div>
+        <div class="ball" id="ball" style="left:50%;">🏈</div>
+      </div>
+      <div class="field-caption">
+        <span id="cap-left">TEAM 1 GOAL</span>
+        <span id="cap-right">TEAM 2 GOAL</span>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Drive log</h2>
+      <div class="log" id="log"></div>
+    </div>
+
+    <div class="panel controls" id="controls">
+      <!-- populated dynamically -->
+    </div>
+  </section>
+
+  <footer>Adapted from &ldquo;Football&rdquo; by Creative Computing, Morristown, New Jersey (1978) · plays run entirely in your browser</footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+
+/* ================= Data ================= */
+const PLAYS = ["PITCHOUT","TRIPLE REVERSE","DRAW","QB SNEAK","END AROUND",
+  "DOUBLE REVERSE","LEFT SWEEP","RIGHT SWEEP","OFF TACKLE","WISHBONE OPTION",
+  "FLARE PASS","SCREEN PASS","ROLL OUT OPTION","RIGHT CURL","LEFT CURL",
+  "WISHBONE OPTION","SIDELINE PASS","HALF-BACK OPTION","RAZZLE-DAZZLE","BOMB!!!!"];
+
+const TEAM1_ORDER = [17,8,4,14,19,3,10,1,7,11,15,9,5,20,13,18,16,2,12,6];
+const TEAM2_ORDER = [20,2,17,5,8,18,12,11,1,4,19,14,10,7,9,15,6,13,16,3];
+
+function buildChart(order){
+  return order.map((num,i)=>({num, idx:i+1, name:PLAYS[i]}));
+}
+const CHART = {1:buildChart(TEAM1_ORDER), 2:buildChart(TEAM2_ORDER)};
+
+/* ================= Helpers ================= */
+const opp = t => t===1?2:1;
+const Wd  = t => t===1?-1:1;
+const Xg  = t => t===1?100:0;
+const Ydir= t => t===1?1:-1;
+const Zg  = t => t===1?0:100;
+const arrow = t => t===1?'→':'←';
+const rnd = () => Math.random();
+const floor = Math.floor;
+
+function fieldPos(p){ return Math.max(0,Math.min(100,Math.round(p))); }
+
+function teamLabel(t){ return G.name[t]; }
+
+/* ================= Game state ================= */
+let G = null;
+function freshState(E, n1, n2){
+  return {
+    T:1, D:1, P:50, S:50, E:E,
+    H:{1:0,2:0},
+    name:{1:n1||"TEAM 1", 2:n2||"TEAM 2"},
+    _resetDown:false, _goalToGo:false,
+    _kickK:0, _scoreQ:0
+  };
+}
+
+/* ================= DOM refs ================= */
+const $ = id => document.getElementById(id);
+const logEl = $('log');
+const controlsEl = $('controls');
+
+function print(text, cls){
+  const div = document.createElement('div');
+  div.className = 'ln' + (cls?(' '+cls):'');
+  div.textContent = text;
+  logEl.appendChild(div);
+  logEl.scrollTop = logEl.scrollHeight;
+}
+function printRule(){
+  const div = document.createElement('div');
+  div.className = 'ln rule';
+  div.textContent = '────────────────────────────────────────';
+  logEl.appendChild(div);
+  logEl.scrollTop = logEl.scrollHeight;
+}
+function printBlank(){ print(' '); }
+
+/* ================= Rendering ================= */
+function renderHUD(){
+  $('sb-name1').textContent = teamLabel(1);
+  $('sb-name2').textContent = teamLabel(2);
+  $('sb-val1').textContent = G.H[1];
+  $('sb-val2').textContent = G.H[2];
+  $('score1').classList.toggle('on', G.T===1);
+  $('score2').classList.toggle('on', G.T===2);
+  $('sb-dd').textContent = `DOWN ${G.D} · BALL ON ${fieldPos(G.P)}`;
+  $('sb-poss').textContent = `${teamLabel(G.T)} HAS THE BALL ${arrow(G.T)}`;
+  $('cap-left').textContent = `${teamLabel(1)} GOAL`;
+  $('cap-right').textContent = `${teamLabel(2)} GOAL`;
+  $('ball').style.left = fieldPos(G.P) + '%';
+}
+
+function renderYardMarks(){
+  const field = $('field');
+  field.querySelectorAll('.yardline,.yardlabel').forEach(e=>e.remove());
+  for(let y=10; y<=90; y+=10){
+    const line = document.createElement('div');
+    line.className='yardline';
+    line.style.left = y+'%';
+    field.appendChild(line);
+    const label = document.createElement('div');
+    label.className='yardlabel';
+    label.style.left = y+'%';
+    label.textContent = y;
+    field.appendChild(label);
+  }
+}
+
+function printScoreLines(){
+  print(`${teamLabel(1)} SCORE IS ${G.H[1]}`);
+  print(`${teamLabel(2)} SCORE IS ${G.H[2]}`);
+  if (G.H[G.T] >= G.E){
+    print(`${teamLabel(G.T)} WINS! ★★★★★★★★★★★★★★★★`, 'hl');
+    return true;
+  }
+  return false;
+}
+
+/* ================= Input primitives ================= */
+function askYesNo(question){
+  print(question, 'dim');
+  return new Promise(resolve=>{
+    controlsEl.innerHTML = '';
+    const q = document.createElement('div');
+    q.className='question';
+    q.textContent = question;
+    const row = document.createElement('div');
+    row.className='yn-row';
+    const yes = document.createElement('button');
+    yes.className='primary'; yes.textContent='Yes';
+    const no = document.createElement('button');
+    no.textContent='No';
+    yes.onclick=()=>{ print('› YES','dim'); resolve(true); };
+    no.onclick=()=>{ print('› NO','dim'); resolve(false); };
+    row.appendChild(yes); row.appendChild(no);
+    controlsEl.appendChild(q); controlsEl.appendChild(row);
+  });
+}
+
+function passDevice(team){
+  return new Promise(resolve=>{
+    controlsEl.innerHTML = '';
+    const wrap = document.createElement('div');
+    wrap.className='pass-device';
+    wrap.innerHTML = `<div class="icon">🤝</div><p>Pass the device to <strong>${teamLabel(team)}</strong>,<br>then hand it back once you've made the call.</p>`;
+    const btn = document.createElement('button');
+    btn.className='primary';
+    btn.textContent = `I'm ${teamLabel(team)} — Show me my chart`;
+    btn.onclick = ()=>resolve();
+    wrap.appendChild(btn);
+    controlsEl.appendChild(wrap);
+  });
+}
+
+function choosePlay(team, heading, opts){
+  opts = opts || {};
+  return new Promise(resolve=>{
+    controlsEl.innerHTML = '';
+    const q = document.createElement('div');
+    q.className='question';
+    q.textContent = heading;
+    controlsEl.appendChild(q);
+
+    const grid = document.createElement('div');
+    grid.className='play-grid';
+    CHART[team].forEach(entry=>{
+      const b = document.createElement('button');
+      b.className='play-btn';
+      b.innerHTML = `<span class="pn">#${entry.num}</span><span>${entry.name}</span>`;
+      b.onclick = ()=>{
+        print(`› TEAM ${team} CALLS PLAY #${entry.num}`, 'dim');
+        resolve({type:'play', num:entry.num, idx:entry.idx, name:entry.name});
+      };
+      grid.appendChild(b);
+    });
+    controlsEl.appendChild(grid);
+
+    if (opts.allowPuntFG || opts.allowShowScore){
+      const extra = document.createElement('div');
+      extra.className='extra-row';
+      if (opts.allowPuntFG){
+        const pfg = document.createElement('button');
+        pfg.className='small ghost';
+        pfg.textContent='Consider punt / field goal instead';
+        pfg.onclick=()=>resolve({type:'puntfg'});
+        extra.appendChild(pfg);
+      }
+      if (opts.allowShowScore){
+        const sc = document.createElement('button');
+        sc.className='small ghost';
+        sc.textContent='Show current score';
+        sc.onclick=()=>resolve({type:'score'});
+        extra.appendChild(sc);
+      }
+      controlsEl.appendChild(extra);
+    }
+  });
+}
+
+function showContinue(label, cb){
+  controlsEl.innerHTML='';
+  const btn=document.createElement('button');
+  btn.className='primary';
+  btn.textContent=label;
+  btn.onclick=cb;
+  controlsEl.appendChild(btn);
+}
+
+/* ================= Game-over screen ================= */
+function renderGameOver(){
+  const winner = G.H[1] > G.H[2] ? 1 : (G.H[2] > G.H[1] ? 2 : 0);
+  controlsEl.innerHTML='';
+  const wrap=document.createElement('div');
+  wrap.className='game-over';
+  wrap.innerHTML = `<div class="winner">${winner? teamLabel(winner)+' WINS' : 'IT\'S A TIE'}</div>
+    <p class="rules" style="margin-top:8px;">Final score — ${teamLabel(1)} ${G.H[1]}, ${teamLabel(2)} ${G.H[2]}</p>`;
+  const btn=document.createElement('button');
+  btn.className='primary';
+  btn.style.marginTop='14px';
+  btn.textContent='Play Again';
+  btn.onclick=()=>{ $('btn-restart').click(); };
+  wrap.appendChild(btn);
+  controlsEl.appendChild(wrap);
+}
+
+/* ================= State machine ================= */
+async function stCoinFlip(){
+  G.T = rnd()<0.5 ? 1 : 2;
+  printRule();
+  print('THE COIN IS FLIPPED');
+  print(`${teamLabel(G.T)} WILL RECEIVE THE OPENING KICKOFF`, 'hl');
+  G.P = Xg(G.T) - Ydir(G.T)*40;
+  G._kickK = 40 + floor(rnd()*26);
+  return stKickReceive;
+}
+
+async function stKickReceive(){
+  const K = G._kickK;
+  G.P -= Ydir(G.T)*K;
+  renderHUD();
+  if (Wd(G.T)*G.P < Zg(G.T)+10){
+    print(`BALL WENT ${K} YARDS. NOW ON ${fieldPos(G.P)}.`);
+    return stRunbackAsk;
+  } else {
+    print('BALL WENT OUT OF THE ENDZONE — AUTOMATIC TOUCHBACK.', 'dim');
+    G.P = Zg(G.T) - Wd(G.T)*20;
+    G._resetDown = true;
+    return stShowDown;
+  }
+}
+
+async function stRunbackAsk(){
+  renderHUD();
+  const yes = await askYesNo(`${teamLabel(G.T)} — DO YOU WANT TO RUN IT BACK?`);
+  if (yes) return stRunbackExec;
+  if (Wd(G.T)*G.P >= Zg(G.T)){
+    G.P = Zg(G.T) - Wd(G.T)*20;
+  }
+  G._resetDown = true;
+  return stShowDown;
+}
+
+async function stRunbackExec(){
+  const Kdiv = 1 + floor(rnd()*9);
+  const R = floor(((Xg(G.T)-Ydir(G.T)*G.P+25)*rnd()-15)/Kdiv);
+  G.P -= Wd(G.T)*R;
+  print(`RUNBACK BY ${teamLabel(G.T)}: ${R} YARDS`);
+  if (rnd() < 0.025) return stTurnover;
+  if (Ydir(G.T)*G.P >= Xg(G.T)) return stTouchdown;
+  if (Wd(G.T)*G.P >= Zg(G.T)) return stSafety;
+  G._resetDown = true;
+  return stShowDown;
+}
+
+async function stTurnover(){
+  const T = G.T;
+  print(`** FUMBLE! POSSESSION GOES FROM ${teamLabel(T)} TO ${teamLabel(opp(T))} **`, 'alert');
+  G.T = opp(T);
+  return stRunbackAsk;
+}
+
+async function stShowDown(){
+  if (G._resetDown){ G.D = 1; G.S = G.P; G._resetDown = false; }
+  printRule();
+  print(`${teamLabel(G.T)} — DOWN ${G.D} — BALL ON ${fieldPos(G.P)}`, 'hl');
+
+  if (G.D === 1){
+    G._goalToGo = Ydir(G.T)*(G.P + Ydir(G.T)*10) >= Xg(G.T);
+  }
+  if (G._goalToGo){
+    print(`${Math.abs(Xg(G.T)-Ydir(G.T)*G.P)} YARDS TO GOAL`, 'dim');
+  } else {
+    print(`${10-(Ydir(G.T)*G.P-Ydir(G.T)*G.S)} YARDS TO 1ST DOWN`, 'dim');
+  }
+  renderHUD();
+
+  if (G.D === 4) return stAskPunt;
+  return stCallOffense;
+}
+
+async function stAskPunt(){
+  const yes = await askYesNo(`DOES ${teamLabel(G.T)} WANT TO PUNT?`);
+  if (yes) return stPuntExec;
+  return stAskFG;
+}
+async function stAskFG(){
+  const yes = await askYesNo(`DOES ${teamLabel(G.T)} WANT TO ATTEMPT A FIELD GOAL?`);
+  if (yes) return stFGExec;
+  return stCallOffense;
+}
+
+async function stPuntExec(){
+  print(`${teamLabel(G.T)} WILL PUNT.`);
+  if (rnd() < 0.025) return stTurnover;
+  const K = 35 + floor(rnd()*25);
+  G.T = opp(G.T);
+  G._kickK = K;
+  return stKickReceive;
+}
+
+async function stFGExec(){
+  print(`${teamLabel(G.T)} WILL ATTEMPT A FIELD GOAL.`);
+  if (rnd() < 0.025) return stTurnover;
+  const F = 20 + floor(rnd()*35);
+  print(`THE KICK IS ${F} YARDS LONG.`);
+  G.P -= Wd(G.T)*F;
+  const g = rnd();
+  let good = true;
+  if (g < 0.35){ print('THE BALL WENT WIDE.', 'dim'); good = false; }
+  else if (Ydir(G.T)*G.P < Xg(G.T)) { good = false; }
+
+  if (good){
+    print(`FIELD GOAL IS GOOD FOR ${teamLabel(G.T)}!`, 'hl');
+    G._scoreQ = 3;
+    return stAddScore;
+  }
+  print(`FIELD GOAL ATTEMPT BY ${teamLabel(G.T)} IS NO GOOD.`, 'dim');
+  if (Ydir(G.T)*G.P < Xg(G.T)+10){
+    G.T = opp(G.T);
+    print(`BALL NOW ON ${fieldPos(G.P)}.`);
+    G._resetDown = true;
+    return stShowDown;
+  }
+  G.T = opp(G.T);
+  if (Wd(G.T)*G.P < Zg(G.T)+10){
+    G._resetDown = true;
+    return stShowDown;
+  }
+  print('BALL WENT OUT OF THE ENDZONE — AUTOMATIC TOUCHBACK.', 'dim');
+  G.P = Zg(G.T) - Wd(G.T)*20;
+  G._resetDown = true;
+  return stShowDown;
+}
+
+async function stCallOffense(){
+  const choice = await choosePlay(G.T, `${teamLabel(G.T)} — CALL YOUR OFFENSE`, {
+    allowPuntFG: G.D < 4, allowShowScore: true
+  });
+  if (choice.type === 'score'){
+    printScoreLines();
+    return stCallOffense;
+  }
+  if (choice.type === 'puntfg'){
+    return stAskPunt;
+  }
+  G._offIdx = choice.idx;
+  return stCallDefense;
+}
+
+async function stCallDefense(){
+  const def = opp(G.T);
+  await passDevice(def);
+  const choice = await choosePlay(def, `${teamLabel(def)} — CALL YOUR DEFENSE`, {});
+  G._defIdx = choice.idx;
+  return stResolvePlay;
+}
+
+async function stResolvePlay(){
+  const T = G.T;
+  const U = floor(rnd()*3) - 1;
+  const diff = Math.abs(G._offIdx - G._defIdx);
+  let Y = floor(diff/19 * ((Xg(T)-Ydir(T)*G.P+25)*rnd() - 15));
+  const isRun = G._offIdx < 11;
+
+  if (isRun){
+    print('THE BALL WAS RUN.');
+  } else if (U !== 0){
+    const g = rnd();
+    if (g > 0.025){
+      print('QUARTERBACK SCRAMBLED.');
+    } else if (Y > 2){
+      print('PASS COMPLETED!');
+    } else {
+      print('QUARTERBACK SCRAMBLED.');
+    }
+  } else {
+    print('PASS INCOMPLETE.', 'dim');
+    Y = 0;
+  }
+
+  G.P -= Wd(T)*Y;
+  print(`NET YARDS GAINED ON DOWN ${G.D}: ${Y}`);
+  renderHUD();
+
+  if (rnd() < 0.025) return stTurnover;
+  if (Ydir(T)*G.P >= Xg(T)) return stTouchdown;
+  if (Wd(T)*G.P >= Zg(T)) return stSafety;
+  if (Ydir(T)*G.P - Ydir(T)*G.S >= 10){
+    G._resetDown = true;
+    return stShowDown;
+  }
+  G.D += 1;
+  if (G.D !== 5){
+    G._resetDown = false;
+    return stShowDown;
+  }
+  print(`TURNOVER ON DOWNS — CONVERSION UNSUCCESSFUL FOR ${teamLabel(T)}.`, 'alert');
+  G.T = opp(T);
+  G._resetDown = true;
+  return stShowDown;
+}
+
+async function stTouchdown(){
+  print(`TOUCHDOWN, ${teamLabel(G.T)}! ★★★★★★★★★★★★★★★★`, 'hl');
+  let Q = 7;
+  if (rnd() > 0.1){
+    print('EXTRA POINT IS GOOD.');
+  } else {
+    Q = 6;
+    print('EXTRA POINT IS NO GOOD.', 'dim');
+  }
+  G._scoreQ = Q;
+  return stAddScore;
+}
+
+async function stAddScore(){
+  const T = G.T;
+  G.H[T] += G._scoreQ;
+  const over = printScoreLines();
+  renderHUD();
+  if (over) return stGameOver;
+  G.T = opp(T);
+  G.P = Xg(G.T) - Ydir(G.T)*40;
+  print(`${teamLabel(G.T)} RECEIVES THE KICKOFF.`);
+  G._kickK = 40 + floor(rnd()*26);
+  return stKickReceive;
+}
+
+async function stSafety(){
+  const T = G.T;
+  print(`SAFETY AGAINST ${teamLabel(T)}! ★★★★★★★★★★★★★★★★`, 'hl');
+  G.H[opp(T)] += 2;
+  const over = printScoreLines();
+  renderHUD();
+  if (over) return stGameOver;
+  const yes = await askYesNo(`${teamLabel(T)} — DO YOU WANT TO PUNT INSTEAD OF A KICKOFF?`);
+  G.P = Zg(T) - Wd(T)*20;
+  if (yes) return stPuntExec;
+  G.T = opp(T);
+  print(`${teamLabel(G.T)} RECEIVES THE KICKOFF.`);
+  G._kickK = 40 + floor(rnd()*26);
+  return stKickReceive;
+}
+
+async function stGameOver(){
+  printRule();
+  print('GAME OVER.', 'hl');
+  renderGameOver();
+  return null;
+}
+
+/* ================= Main loop ================= */
+async function runGame(){
+  let state = stCoinFlip;
+  while (state){
+    state = await state();
+  }
+}
+
+/* ================= Setup screen wiring ================= */
+function renderChart(team){
+  const disp = $('chart-display');
+  disp.innerHTML='';
+  CHART[team].forEach(entry=>{
+    const cell = document.createElement('div');
+    cell.className='chart-cell';
+    cell.innerHTML = `<span class="num">#${entry.num}</span><span>${entry.name}</span>`;
+    disp.appendChild(cell);
+  });
+}
+let activeTab = 1;
+$('tab1').onclick = ()=>{ activeTab=1; $('tab1').classList.add('active'); $('tab2').classList.remove('active'); renderChart(1); };
+$('tab2').onclick = ()=>{ activeTab=2; $('tab2').classList.add('active'); $('tab1').classList.remove('active'); renderChart(2); };
+renderChart(1);
+
+$('btn-start').onclick = ()=>{
+  const E = Math.max(1, parseInt($('score-limit').value,10) || 21);
+  const n1 = $('name1').value.trim();
+  const n2 = $('name2').value.trim();
+  G = freshState(E, n1, n2);
+  $('setup').hidden = true;
+  $('game').hidden = false;
+  $('btn-restart').hidden = false;
+  logEl.innerHTML = '';
+  renderYardMarks();
+  renderHUD();
+  runGame();
+};
+
+$('btn-restart').onclick = ()=>{
+  $('game').hidden = true;
+  $('setup').hidden = false;
+  $('btn-restart').hidden = true;
+};
+
+/* ---- keep viewers open across a redeploy ---- */
+function boot(){ /* static setup screen is already interactive; nothing to hydrate */ }
+if (window.claude && window.claude.hot){
+  window.claude.hot.ready ? window.claude.hot.ready(boot) : boot();
+} else {
+  boot();
+}
+})();
+</script>
+
+</body></html>

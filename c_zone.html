@@ -1,0 +1,1565 @@
+<title>Wireframe Front</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@500;700&display=swap');
+
+:root{
+  --void:#06170f;
+  --phosphor:#39ff8f;
+  --phosphor-dim:#8bd9a6;
+  --amber:#ff9a2e;
+  --red:#ff4d4d;
+  --blue:#4dc9ff;
+  --steel:#0a2418;
+  --steel-line:#1c4a30;
+  --text:#bdf7d4;
+  color-scheme: dark;
+}
+*{box-sizing:border-box;}
+body{
+  margin:0;
+  background:var(--void);
+  color:var(--text);
+  font-family:'Share Tech Mono',monospace;
+  padding-inline:16px;
+  padding-block:20px;
+}
+.wrap{max-width:980px;margin:0 auto;}
+h1{
+  font-family:'Orbitron',sans-serif;
+  font-weight:700;
+  font-size:clamp(1.6rem,5.5vw,2.6rem);
+  letter-spacing:0.08em;
+  text-align:center;
+  margin:0 0 4px;
+  color:var(--phosphor);
+  text-shadow:0 0 14px rgba(57,255,143,0.45);
+  text-wrap:balance;
+}
+.sub{
+  text-align:center;color:var(--phosphor-dim);font-size:0.9rem;
+  letter-spacing:0.18em;text-transform:uppercase;margin-bottom:18px;
+}
+.panel{
+  background:var(--steel);
+  border:1px solid var(--steel-line);
+  border-radius:10px;
+  padding:18px;
+  margin-bottom:14px;
+}
+.panel h2{
+  font-family:'Orbitron',sans-serif;font-size:1rem;letter-spacing:0.06em;
+  color:var(--amber);margin:0 0 12px;text-transform:uppercase;
+}
+.rules{font-size:0.92rem;line-height:1.65;color:var(--text);}
+.rules p{margin:0 0 8px;}
+.opts-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
+  gap:12px;margin-top:10px;
+}
+.opt{display:flex;flex-direction:column;gap:4px;}
+.opt label{font-size:0.82rem;text-transform:uppercase;letter-spacing:0.07em;color:var(--phosphor-dim);}
+.opt input[type=number],.opt input[type=range]{
+  background:var(--void);border:1px solid var(--steel-line);border-radius:6px;
+  color:var(--text);padding:7px 8px;font-family:'Share Tech Mono',monospace;
+}
+.opt .checkrow{display:flex;align-items:center;gap:8px;padding:7px 0;}
+.opt .checkrow input{width:16px;height:16px;}
+button{
+  font-family:'Share Tech Mono',monospace;font-weight:700;cursor:pointer;
+  background:var(--phosphor-dim);color:var(--void);border:1px solid var(--phosphor);
+  border-radius:7px;padding:10px 18px;font-size:0.9rem;letter-spacing:0.04em;
+  transition:filter .12s, transform .08s;
+}
+button:hover{filter:brightness(1.25);}
+button:active{transform:translateY(1px);}
+button.fire{background:var(--phosphor);color:var(--void);border-color:var(--phosphor);}
+button.ghost{background:transparent;color:var(--text);border-color:var(--steel-line);}
+button.big{font-size:1.05rem;padding:13px 26px;}
+.start-row{text-align:center;margin-top:6px;}
+
+#gameSection{display:none;}
+.stagewrap{
+  position:relative;width:100%;
+  aspect-ratio:1000/700;
+  background:#000;
+  border:1px solid var(--steel-line);
+  border-radius:10px;
+  overflow:hidden;
+  touch-action:none;
+  cursor:crosshair;
+}
+canvas{display:block;width:100%;height:100%;}
+.crt-overlay{
+  position:absolute;inset:0;pointer-events:none;
+  background:repeating-linear-gradient(0deg, rgba(0,0,0,0.16) 0 1px, transparent 1px 3px);
+  mix-blend-mode:multiply;
+}
+.vignette{
+  position:absolute;inset:0;pointer-events:none;
+  box-shadow:inset 0 0 140px rgba(0,0,0,0.85);
+}
+.game-actions{
+  display:flex;justify-content:center;gap:10px;margin-top:12px;flex-wrap:wrap;
+}
+.hint{
+  text-align:center;font-size:0.85rem;color:var(--phosphor-dim);
+  margin-top:10px;letter-spacing:0.03em;line-height:1.6;
+}
+footer{
+  text-align:center;font-size:0.78rem;color:var(--phosphor-dim);
+  margin-top:18px;letter-spacing:0.03em;
+}
+[hidden]{display:none!important;}
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>WIREFRAME FRONT</h1>
+    <div class="sub">a browser reimagining of the 1990 X11 vector-tank game cbzone</div>
+  </header>
+
+  <section id="setupSection">
+    <div class="panel">
+      <h2>Briefing</h2>
+      <div class="rules">
+        <p>You're alone in a vector desert crawling with enemy armor. Aim your tank with the crosshair — move your pointer around the viewscreen to steer and throttle, the joystick dial in the corner shows exactly what you're commanding. Click to fire. Enemy tanks and supertanks close in and shell you when you're in their sights; hold out long enough and they'll switch to a missile and helicopter run instead. Landers drift through occasionally — shoot them down for the biggest bounty.</p>
+        <p>Score enough and you'll earn reserve tanks. Run out of reserves and it's over.</p>
+      </div>
+      <div class="opts-grid">
+        <div class="opt"><label for="optTanks">Enemy tanks</label><input type="number" id="optTanks" min="0" max="6" value="1"></div>
+        <div class="opt"><label for="optMissiles">Missiles</label><input type="number" id="optMissiles" min="0" max="6" value="1"></div>
+        <div class="opt"><label for="optBlocks">Terrain blocks</label><input type="number" id="optBlocks" min="0" max="20" value="8"></div>
+        <div class="opt"><label for="optLanders">Landers</label><input type="number" id="optLanders" min="0" max="10" value="4"></div>
+        <div class="opt"><label for="optDelay">Game speed (0=fast, 10=slow)</label><input type="range" id="optDelay" min="0" max="10" value="5"></div>
+        <div class="opt">
+          <label>&nbsp;</label>
+          <div class="checkrow"><input type="checkbox" id="optCopters"><label for="optCopters" style="text-transform:none;letter-spacing:0;color:var(--text);">Helicopters-only practice</label></div>
+        </div>
+      </div>
+      <div class="start-row">
+        <button class="ghost" id="btnDefaults">Reset to Arcade Defaults</button>
+        <button class="big" id="btnStart">Roll Out ▶</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="gameSection">
+    <div class="stagewrap" id="stageWrap">
+      <canvas id="cv" width="1000" height="700"></canvas>
+      <div class="crt-overlay"></div>
+      <div class="vignette"></div>
+    </div>
+    <div class="game-actions">
+      <button class="fire" id="btnFire">Fire</button>
+      <button class="ghost" id="btnPause">Pause</button>
+      <button class="ghost" id="btnGear">Switch Gear</button>
+      <button class="ghost" id="btnQuit">Quit to Setup</button>
+    </div>
+    <div class="hint">Move your pointer over the screen to steer &amp; throttle &middot; click / tap to fire &middot; middle-click or Space centers the stick &middot; P pauses</div>
+  </section>
+
+  <footer>Mechanics adapted from cbzone (Revenaugh / Mummert, 1986&ndash;1991) &middot; runs entirely in your browser, no installation</footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+
+/* ===================================================================
+ * CONSTANTS
+ * =================================================================== */
+const PI = Math.PI, PI2 = Math.PI*2;
+const CX = 500, CY = 260, FSCALE = 450;         // projection center / scale
+const BMT_TOL = 14400, BMC_TOL = 6000, BMS_TOL = 14400;
+const OUT_OF_DRAWING_RANGE = 2000.0;
+const BLOCK_SIZE = 100.0, BLOCK_SIZE_SQ = 10000.0;
+const TANK_STRAND_COUNT = 700;
+
+function frand(){ return Math.random(); }
+function ra(deg){ return deg*PI/180.0; }
+function sign(v,c){ return c<0.0 ? -v : v; }
+function clamp(v,lo,hi){ return v<lo?lo:(v>hi?hi:v); }
+
+const COLORS = {
+  bg:'#06170f', fg:'#2a6b4a', cracks:'#4dc9ff', psalvo:'#4dc9ff',
+  xhair:'#8fb9a4', horizon:'#47845e', moon:'#6b7f78', esalvo:'#ff4d4d',
+  text:'#ff9a2e', joystick:'#ff4d4d', scanner:'#39ff8f',
+  tank:'#39ff8f', super:'#39ff8f', missile:'#39ff8f', copter:'#39ff8f',
+  lander:'#39ff8f', cube:'#ffd23f', pyramid:'#ffd23f'
+};
+function fadeColor(hex, t){ // t in [0,1], 1=full bright (near), 0=dim (far)
+  const c = hex.replace('#','');
+  const r = parseInt(c.substr(0,2),16), g = parseInt(c.substr(2,2),16), b = parseInt(c.substr(4,2),16);
+  const k = 0.22 + 0.78*t;
+  return `rgb(${r*k|0},${g*k|0},${b*k|0})`;
+}
+
+/* ===================================================================
+ * SHAPES  (vertex data lifted from cbzone's c_draw.c / c_explode.c)
+ * pnum = polyline vertex-run lengths (closed strips), mnum = multiline
+ * segment counts (each *2 verts, drawn as disconnected pairs).
+ * =================================================================== */
+const SHAPES = {
+  cube: {
+    verts:[[-40,40,-40],[-40,40,40],[40,40,40],[40,40,-40],
+           [-40,40,-40],[-40,-40,-40],[40,-40,-40],[40,-40,40],
+           [-40,-40,40],[-40,-40,-40],[-40,-40,40],[-40,40,40],
+           [40,-40,40],[40,40,40],[40,-40,-40],[40,40,-40]],
+    pnum:[10], mnum:[6], mode:'I'
+  },
+  pyramid:{
+    verts:[[-40,40,-40],[40,40,-40],[40,-40,-40],[40,40,-40],
+           [0,0,40],[-40,40,-40],[-40,-40,-40],[0,0,40],
+           [40,-40,-40],[-40,-40,-40]],
+    pnum:[10], mnum:[], mode:'I'
+  },
+  salvo:{
+    verts:[[0,-10,-8],[8,-10,0],[0,-10,8],[8,-10,0],
+           [0,10,0],[0,-10,8],[-8,-10,0],[0,10,0],
+           [0,-10,-8],[-8,-10,0]],
+    pnum:[10], mnum:[], mode:'II'
+  },
+  lander:{
+    verts:[[0,0,20],[80,0,-20],[40,0,-40],[-40,0,-40],
+           [-80,0,-20],[0,0,20],[0,80,-20],[0,40,-40],
+           [0,-40,-40],[0,-80,-20],[0,0,20],[-57,-57,-20],
+           [-28,-28,-40],[28,28,-40],[57,57,-20],[0,0,20],
+           [57,-57,-20],[28,-28,-40],[-28,28,-40],[-57,57,-20],
+           [0,0,20]],
+    pnum:[21], mnum:[], mode:'III', spin:[0.996195,0.087156]
+  },
+  missile:{
+    verts:[[15,-30,-25],[25,-30,0],[0,-45,0],[15,-30,-25],
+           [-15,-30,-25],[0,-45,0],[15,-30,25],[-15,-30,25],
+           [0,-45,0],[-25,-30,0],[-15,-30,25],[15,-30,-25],
+           [0,50,0],[25,-30,0],[15,-30,25],[0,50,0],
+           [-15,-30,-25],[-25,-30,0],[0,50,0],[-15,-30,25]],
+    pnum:[11,9], mnum:[], mode:'II'
+  },
+  copterBlade:{
+    verts:[[6,100,30],[-6,-100,30],[6,-100,30],
+           [-6,100,30],[6,100,30]],
+    pnum:[5], mnum:[], mode:'III', spin:[0.819152,0.573576]
+  },
+  copterBody:{
+    verts:[[0,-114,-10],[7,-30,-34],[10,-34,-14],[0,-116,0],
+           [0,-134,28],[0,-144,28],[0,-130,-10],[0,-114,-10],
+           [-7,-30,-34],[-10,-34,-14],[0,-116,0],[-14,34,-34],
+           [14,34,-34],[0,60,-14],[-14,34,-34],[-7,-30,-34],
+           [7,-30,-34],[14,34,-34],[26,34,-14],[0,60,-14],
+           [-26,34,-14],[-10,-34,-14],[10,-34,-14],[26,34,-14],
+           [4,20,16],[0,22,16],[-4,20,16],[-4,-22,16],
+           [4,-22,16],[4,20,16],[0,0,16],[0,0,36],
+           [-14,-30,-40],[-14,40,-40],[-14,40,-40],[-14,44,-36],
+           [14,-30,-40],[14,40,-40],[14,40,-40],[14,44,-36],
+           [-10,-34,-14],[-4,-22,16],[10,-34,-14],[4,-22,16],
+           [0,22,16],[0,60,-14],[-14,34,-34],[-26,34,-14],
+           [-26,34,-14],[-4,20,16]],
+    pnum:[11,19], mnum:[10,10], mode:'II'
+  },
+  super:{
+    verts:[[3,55,-6],[3,55,0],[-3,55,0],[-3,55,-6],[3,55,-6],
+           [0,35,-33],[13,-60,-6],[11,-60,4],[11,-25,4],
+           [0,35,-33],[-13,-60,-6],[-11,-60,4],[-11,-25,4],
+           [0,35,-33],[15,60,-40],[30,-60,-40],[30,-60,-6],
+           [15,60,-40],[-15,60,-40],[-30,-60,-40],[-30,-60,-6],
+           [-15,60,-40],[22,-52,-8],[22,-52,28],
+           [3,-17,0],[3,55,0],[-3,-17,0],[-3,55,0],
+           [3,-8,-6],[3,55,-6],[-3,-8,-6],[-3,55,-6],
+           [11,-60,4],[-11,-60,4],[11,-25,4],[-11,-25,4],
+           [-30,-60,-6],[30,-60,-6],[-30,-60,-40],[30,-60,-40]],
+    pnum:[5,9,8], mnum:[2,8,4,4], mode:'II'
+  },
+  tankDish:{
+    verts:[[3,0,13],[5,3,15],[5,3,19],[3,0,21],
+           [-3,0,21],[-5,3,19],[-5,3,15],[-3,0,13],[3,0,13]],
+    pnum:[9], mnum:[], mode:'IV', spin:[0.996195,0.087156], pivot:[5,-40]
+  },
+  tankBody:{
+    verts:[[-3,60,-3],[3,60,-3],[3,60,3],[-3,60,3],[-3,60,-3],
+           [-10,-45,10],[-10,-13,10],[10,-13,10],[10,-45,10],
+           [25,-50,-11],[25,60,-20],[10,-13,10],[-10,-13,10],
+           [-25,60,-20],[-25,-50,-11],[-10,-45,10],
+           [10,-45,10],[30,-53,-40],[35,-60,-10],[35,60,-20],
+           [30,37,-40],[-30,37,-40],[-35,60,-20],[-35,-60,-10],
+           [-30,-53,-40],[30,-53,-40],[30,37,-40],
+           [5,-40,10],[5,-40,13],[3,4,3],[3,60,3],
+           [-3,4,3],[-3,60,3],[-3,19,-3],[-3,60,-3],
+           [3,19,-3],[3,60,-3],
+           [35,-60,-10],[-35,-60,-10],[35,60,-20],[-35,60,-20],
+           [-30,-53,-40],[-30,37,-40]],
+    pnum:[5,12,10], mnum:[2,8,6], mode:'II'
+  }
+};
+
+/* explosion fragment sets: [ {shape:{verts,pnum,mnum}, yoff, zoff, vars:[cta,sta,ctp,stp step]} ... ] */
+const V0 = [0.996195,0.087156,0.996195,0.087156];
+const V1 = [0.996195,-0.087156,0.996195,-0.087156];
+const V2 = [0.819152,0.573576,0.996195,0.087156];
+
+const EXPLODE_TANK = [
+  { verts:[[30,-53,-15],[35,-60,15],[35,60,-5],[30,37,-15],[-30,37,-15],[-35,60,-5],[-35,-60,15],[-30,-53,-15],
+            [30,-53,-15],[30,37,-15],[35,-60,15],[-35,-60,15],[35,60,-5],[-35,60,-5],[-30,-53,-15],[-30,37,-15]],
+    pnum:[10], mnum:[6], yoff:0.0, zoff:-25.0, vars:V0 },
+  { verts:[[-10,-50,10],[-10,-18,10],[10,-18,10],[10,-50,10],
+            [25,-55,-11],[25,55,-20],[10,-18,10],[-10,-18,10],
+            [-25,55,-20],[-25,-55,-11],[-10,-50,10],[10,-50,10]],
+    pnum:[12], mnum:[], yoff:5.0, zoff:0.0, vars:V0 },
+  { verts:[[-3,28,-3],[3,28,-3],[3,28,3],[-3,28,3],[-3,28,-3],
+            [3,-28,3],[3,28,3],[-3,-28,3],
+            [-3,28,3],[-3,-13,-3],[-3,28,-3],[3,-13,-3],[3,28,-3]],
+    pnum:[5], mnum:[8], yoff:32.0, zoff:0.0, vars:V1 }
+];
+const EXPLODE_SUPER = [
+  { verts:[[15,60,-15],[30,-60,-15],[30,-60,19],[15,60,-15],
+            [-15,60,-15],[-30,-60,-15],[-30,-60,19],[-15,60,-15],
+            [-30,-60,19],[30,-60,19],[-30,-60,-15],[30,-60,-15]],
+    pnum:[8], mnum:[4], yoff:0.0, zoff:-25.0, vars:V0 },
+  { verts:[[0,47,-18],[13,-48,9],[11,-48,19],[11,-13,19],
+            [0,47,-18],[-13,-48,9],[-11,-48,19],[-11,-13,19],
+            [0,47,-18],[11,-48,19],[-11,-48,19],[11,-13,19],[-11,-13,19]],
+    pnum:[9], mnum:[4], yoff:-12.0, zoff:-15.0, vars:V0 },
+  { verts:[[3,-36,0],[3,36,0],[-3,-36,0],[-3,36,0],
+            [3,-27,-6],[3,36,-6],[-3,-27,-6],[-3,36,-6],
+            [3,36,-6],[3,36,0],[-3,36,0],[-3,36,-6],[3,36,-6]],
+    pnum:[4], mnum:[5], yoff:19.0, zoff:0.0, vars:V1 }
+];
+const EXPLODE_MISSILE = [
+  { verts:[[15,-30,-25],[25,-30,0],[0,-45,0],[15,-30,-25],
+            [-15,-30,-25],[0,-45,0],[15,-30,25],[-15,-30,25],
+            [0,-45,0],[-25,-30,0],[-15,-30,25]],
+    pnum:[11], mnum:[], yoff:0.0, zoff:0.0, vars:V0 },
+  { verts:[[15,-30,-25],[0,50,0],[25,-30,0],[15,-30,25],
+            [0,50,0],[-15,-30,-25],[-25,-30,0],[0,50,0],[-15,-30,25]],
+    pnum:[9], mnum:[], yoff:0.0, zoff:0.0, vars:V0 },
+  { verts:[[13,-17,11],[15,-30,5],[23,-38,-10],[23,0,-10],[13,-17,11]],
+    pnum:[5], mnum:[], yoff:0.0, zoff:-30.0, vars:V1 },
+  { verts:[[-13,-17,11],[-15,-30,5],[-23,-38,-10],[-23,0,-10],[-13,-17,11]],
+    pnum:[5], mnum:[], yoff:0.0, zoff:-30.0, vars:V1 }
+];
+const EXPLODE_COPTER = [
+  { verts:[[6,100,0],[6,100,0],[-6,-100,0],[6,-100,0],[-6,100,0],[6,100,0]],
+    pnum:[6], mnum:[], yoff:0.0, zoff:30.0, vars:V2 },
+  { verts:[[0,-32,-10],[7,52,-34],[10,48,-14],[0,-34,0],
+            [0,-52,28],[0,-62,28],[0,-48,-10],[0,-32,-10],
+            [-7,52,-34],[-10,48,-14],[0,-34,0]],
+    pnum:[11], mnum:[], yoff:-82.0, zoff:0.0, vars:V0 },
+  { verts:[[-14,34,-34],[14,34,-34],[0,60,-14],[-14,34,-34],
+            [-7,-30,-34],[7,-30,-34],[14,34,-34],[26,34,-14],
+            [0,60,-14],[-26,34,-14],[-10,-34,-14],[10,-34,-14],
+            [26,34,-14],[4,20,16],[0,22,16],[-4,20,16],
+            [-4,-22,16],[4,-22,16],[4,20,16],[-10,-34,-14],
+            [-4,-22,16]],
+    pnum:[19], mnum:[10], yoff:0.0, zoff:0.0, vars:V1 }
+];
+const EXPLODE_PIECES = { tank:EXPLODE_TANK, super:EXPLODE_SUPER, missile:EXPLODE_MISSILE, copter:EXPLODE_COPTER };
+
+/* ===================================================================
+ * PROJECTION  (matches calcpointsI..V from c_draw.c / c_explode.c)
+ * pl: {x,y,ca,sa}. Returns array of [sx,sy] in the 500/260/450 space.
+ * =================================================================== */
+function projStatic(verts, pos, pl){ // mode I: no object rotation (blocks)
+  const dx = pl.x-pos.x, dy = pl.y-pos.y;
+  return verts.map(([x,y,z])=>{
+    const xpoff=x-dx, ypoff=y-dy;
+    let prx=xpoff*pl.ca+ypoff*pl.sa, pry=-xpoff*pl.sa+ypoff*pl.ca;
+    if(pry<10)pry=10;
+    const prz=z+pos.z;
+    return [CX+prx/pry*FSCALE, CY-prz/pry*FSCALE];
+  });
+}
+function projAzm(verts, pos, azm, pl){ // mode II: rotates with azm
+  const csa=Math.cos(azm), ssa=Math.sin(azm);
+  const dx=pl.x-pos.x, dy=pl.y-pos.y;
+  const xn=dx*csa+dy*ssa, yn=-dx*ssa+dy*csa;
+  const cn=pl.ca*csa+pl.sa*ssa, sn=pl.sa*csa-ssa*pl.ca;
+  return verts.map(([x,y,z])=>{
+    const rx=x-xn, ry=y-yn;
+    let prx=rx*cn+ry*sn, pry=-rx*sn+ry*cn;
+    if(pry<10)pry=10;
+    const prz=z+pos.z;
+    return [CX+prx/pry*FSCALE, CY-prz/pry*FSCALE];
+  });
+}
+function projSpin(verts, pos, spinState, pl){ // mode III: independent spin, no azm
+  const {cta,sta}=spinState;
+  const dx=pl.x-pos.x, dy=pl.y-pos.y;
+  const xn=dx*cta+dy*sta, yn=-dx*sta+dy*cta;
+  const cn=pl.ca*cta+pl.sa*sta, sn=pl.sa*cta-pl.ca*sta;
+  return verts.map(([x,y,z])=>{
+    const rx=x-xn, ry=y-yn;
+    let prx=rx*cn+ry*sn, pry=-rx*sn+ry*cn;
+    if(pry<10)pry=10;
+    const prz=z+pos.z;
+    return [CX+prx/pry*FSCALE, CY-prz/pry*FSCALE];
+  });
+}
+function projPivotSpin(verts, pos, spinState, azm, pivotVars, pl){ // mode IV: pivoted spin + azm
+  const {cta,sta}=spinState;
+  const csa=Math.cos(azm), ssa=Math.sin(azm);
+  const dx=pl.x-pos.x, dy=pl.y-pos.y;
+  const xn=dx*csa+dy*ssa, yn=-dx*ssa+dy*csa;
+  const cn=pl.ca*csa+pl.sa*ssa, sn=pl.sa*csa-ssa*pl.ca;
+  const pivotx=pivotVars[0]-xn, pivoty=pivotVars[1]-yn;
+  return verts.map(([x,y,z])=>{
+    const rx=x*cta-y*sta+pivotx, ry=x*sta+y*cta+pivoty;
+    let prx=rx*cn+ry*sn, pry=-rx*sn+ry*cn;
+    if(pry<10)pry=10;
+    const prz=z+pos.z;
+    return [CX+prx/pry*FSCALE, CY-prz/pry*FSCALE];
+  });
+}
+
+/* ===================================================================
+ * OBJECT MODEL
+ * =================================================================== */
+function stillThere(g){ return g.alive || g.exploding || g.erase || g.exerase; }
+
+function newObject(type){
+  return {
+    type, x:0,y:0,z:0, azm:0, ca:1,sa:0, speed:0, rotate:0,
+    range:0, prox:0, proy:0, criticalx:0, criticaly:0, orientation:1,
+    alive:false, isNew:false, erase:false, exerase:false, canShoot:false,
+    preset:false, evading:false, exploding:false, blocked:false,
+    blockedByEnemy:false, blockedByBlock:false, lastBlocked:false,
+    ecount:0, ccount:0, pcount:0, bcount:0, fcount:0,
+    hasDC:false, seen:false, lastSeen:false, dcTurret:{cta:1,sta:0},
+    dcBlade:{cta:1,sta:0}, dcSpin:{cta:1,sta:0}, fragDC:null, salvo:null
+  };
+}
+function startLiving(g){ g.alive=true; g.isNew=true; g.exploding=false; g.erase=false; g.exerase=false; g.hasDC=false; }
+function startExploding(g){ g.exploding=true; g.erase=true; g.isNew=true; g.alive=false; g.hasDC=false; g.ecount=0; }
+
+/* ===================================================================
+ * WORLD
+ * =================================================================== */
+let W = null; // world state, created by initWorld()
+
+function initWorld(opts){
+  const player = newObject('player');
+  player.criticalx=45; player.criticaly=70;
+  startLiving(player); player.x=0; player.y=0; player.azm=0; player.ca=1; player.sa=0;
+
+  const msalvos = Math.max(opts.tanks, opts.missiles, 1);
+  const mkSalvoPool = (n)=>{ const a=[]; for(let i=0;i<n;i++){ const s=newObject('salvo'); a.push(s);} return a; };
+
+  player.salvoPool = mkSalvoPool(msalvos);
+
+  const w = {
+    opt: opts,
+    player,
+    enemies: [],     // tanks / supers / missiles / copters
+    landers: [],
+    blocks: [],
+    score: 0,
+    scorebase: 0,
+    numleft: 3,
+    missilerun: false,
+    lander800: false,
+    nummissile: 0,
+    missilecount: 0,
+    nextmissile: 1200,
+    landercount: 0,
+    firstmissile: true,
+    firstRun: true,
+    dead: false,
+    deadcount: 0,
+    tankStranded: false,
+    sightFlag:false, blockedFlag:false, salvoFlag:false,
+    aligned:false, newSight:false,
+    joyPos:[500,355], sens:false,
+    gameOver:false,
+    scanAngle:0,
+    horizonAzmDeg:0,
+    messages:{sight:false, blocked:false, salvo:false},
+    frame:0
+  };
+  const mEnemy = Math.max(opts.tanks, opts.missiles, 1);
+  for (let i=0;i<mEnemy+2;i++){
+    const g = newObject('enemy');
+    g.salvo = newObject('salvo'); g.salvo.owner=g;
+    w.enemies.push(g);
+  }
+  for (let i=0;i<opts.landers+2;i++) w.landers.push(newObject('lander'));
+  for (let i=0;i<opts.blocks+2;i++) w.blocks.push(newObject('block'));
+  player.salvoPool.forEach(s=>s.owner=player);
+  return w;
+}
+
+/* ===================================================================
+ * PLACE OBJECTS  (port of placeobjects())
+ * =================================================================== */
+function placeObjects(){
+  const o = W.opt, pl = W.player;
+  W.landercount++;
+
+  let nta=0,nsu=0,nmi=0,nco=0,nla=0;
+  for (const g of W.enemies) if (stillThere(g)){
+    if (g.type2==='tank') nta++;
+    else if (g.type2==='super') nsu++;
+    else if (g.type2==='missile') nmi++;
+    else if (g.type2==='copter') nco++;
+  }
+  for (const g of W.landers) if (stillThere(g)) nla++;
+
+  if (pl.alive &&
+      ((W.missilerun && nta+nsu===0 && nmi+nco<o.missiles) ||
+       (!W.missilerun && nmi+nco===0 && nta+nsu<o.tanks))) {
+    const g = W.enemies.find(e=>!stillThere(e));
+    if (g){
+      let r, dazm, scale;
+      if (W.missilerun){
+        const odds0 = W.score/500000.0;
+        let odds = W.score<75000 ? 0.0 : odds0;
+        if (odds>0.333) odds=0.333;
+        if (o.copters || frand()<odds){
+          g.type2='copter'; scale=0.2; g.z=150.0; r=1900;
+        } else {
+          g.type2='missile'; scale=0.1; g.z=250.0; r=1750;
+        }
+        dazm = frand()*scale;
+        if (frand()>0.5) dazm=-dazm;
+        dazm += pl.azm;
+        g.x = pl.x - r*Math.sin(dazm);
+        g.y = pl.y + r*Math.cos(dazm);
+        startLiving(g);
+        dazm = frand()*0.015/scale;
+        if (frand()>0.5) dazm=-dazm;
+        g.azm = pl.azm - PI + dazm;
+      } else {
+        let odds = (60000.0-W.score)/30000.0;
+        if (odds<0.10) odds=0.10;
+        g.type2 = frand()<odds ? 'tank' : 'super';
+        r = 800.0 + 1200.0*frand();
+        dazm = frand()*PI2;
+        g.x = pl.x + r*Math.cos(dazm);
+        g.y = pl.y + r*Math.sin(dazm);
+        g.z = 0.0;
+        g.azm = frand()*PI2;
+        startLiving(g);
+      }
+      g.criticalx=45.0; g.criticaly=70.0;
+    }
+  }
+
+  if (W.landercount>1000 && nla<o.landers){
+    const g = W.landers.find(l=>!stillThere(l));
+    if (g){
+      const r = 1500.0+500.0*frand();
+      const dazm = frand()*PI2;
+      g.x = pl.x + r*Math.cos(dazm);
+      g.y = pl.y + r*Math.sin(dazm);
+      g.z=0.0; g.azm=frand()*PI2; g.speed=frand()*10.0;
+      g.criticalx=g.criticaly=6400.0;
+      startLiving(g);
+    }
+  }
+
+  for (const g of W.blocks) if (!g.alive){
+    if (frand()>0.5){ g.type2='cube'; g.criticalx=g.criticaly=50.0; }
+    else { g.type2='pyramid'; g.criticalx=g.criticaly=35.0; }
+    startLiving(g);
+    const r = pl.isNew ? (400+frand()*1800.0) : 2000.0;
+    const dazm = frand()*PI2;
+    g.x = pl.x + r*Math.cos(dazm);
+    g.y = pl.y + r*Math.sin(dazm);
+    g.z = 0.0;
+  }
+}
+
+/* ===================================================================
+ * FIRE PREDICTION  (shared iterative lead-shot loop used by
+ * tanks / supertanks / copters)
+ * =================================================================== */
+function predictAndFire(g, pl, tol){
+  const s = g.salvo;
+  if (!(pl.alive) || stillThere(s)) return;
+  let cp=pl.ca, sp=pl.sa;
+  const dcp=Math.cos(pl.rotate), dsp=Math.sin(pl.rotate);
+  const cm=Math.cos(g.azm), sm=Math.sin(g.azm);
+  let xmt=g.x, ymt=g.y, xpt=pl.x, ypt=pl.y;
+  const rate=40.0;
+  for (let i=0;i<50;i++){
+    const temp=cp;
+    cp = cp*dcp - sp*dsp;
+    sp = sp*dcp + dsp*temp;
+    xmt -= sm*rate; ymt += cm*rate;
+    xpt -= sp*pl.speed; ypt += cp*pl.speed;
+    const dist = (xpt-xmt)*(xpt-xmt) + (ymt-ypt)*(ymt-ypt);
+    if (dist<=tol){
+      startLiving(s); s.isNew=false;
+      s.x=g.x; s.y=g.y; s.z=0.0; s.prox=g.prox; s.proy=g.proy;
+      s.azm=g.azm; s.speed=40.0; s.ecount=0;
+      W.messages.salvo = true;
+      break;
+    }
+  }
+}
+
+function aimAt(g, pl){
+  let dx=pl.x-g.x, dy=pl.y-g.y;
+  if (Math.abs(dy)<1e-7) dy = sign(1e-7, dy);
+  let tazm = dy<=0.0 ? -Math.atan(dx/dy)+ra(180.0) : -Math.atan(dx/dy);
+  if (g.azm>PI2) g.azm -= PI2;
+  if (g.azm<0.0) g.azm += PI2;
+  return tazm;
+}
+
+/* ===================================================================
+ * AI: ground enemies (tank / supertank share this shape)
+ * =================================================================== */
+function moveGroundEnemy(g, pl, C){
+  g.pcount++; g.fcount++;
+  if (g.isNew){
+    g.isNew=false; g.preset=false; g.bcount=0; g.ecount=0;
+    g.pcount=C.pcountInit; g.fcount=C.fcountInit; g.orientation=1.0;
+  }
+  if (g.blocked && g.lastBlocked) g.orientation = -g.orientation;
+  g.lastBlocked = false;
+
+  if (g.blocked){
+    g.evading = !!g.blockedByEnemy;
+    g.preset = true; g.lastBlocked = true; g.bcount = 0;
+  }
+
+  if (g.preset){
+    g.bcount++;
+    if (!g.evading){
+      if (g.bcount===1){
+        g.speed = -C.maxSpeed*g.orientation;
+        g.rotate = C.rot0;
+        if (frand()>0.5) g.rotate=-g.rotate;
+      } else if (g.bcount===C.phase2){
+        g.speed = C.maxSpeed*g.orientation; g.rotate=0.0;
+      } else if (g.bcount>C.clear1){
+        g.preset=false;
+      }
+    } else {
+      if (g.bcount===1){
+        g.speed = -C.maxSpeed*g.orientation; g.rotate=0.0;
+      } else if (g.bcount===10||g.bcount===15||g.bcount===20||g.bcount===25){
+        const tazm = aimAt(g,pl);
+        let t1=(tazm-g.azm)/C.retargetDiv, t3=(tazm-(g.azm-PI2))/C.retargetDiv;
+        if (Math.abs(t3)<Math.abs(t1)) t1=t3;
+        if (Math.abs(t1)>C.rot0) t1=sign(C.rot0,t1);
+        g.rotate=t1; g.speed=0.0;
+      } else if (g.bcount>30){
+        g.preset=false;
+      }
+    }
+  } else if (g.pcount>=C.pcountThresh){
+    g.orientation=1.0; g.pcount=0;
+    const tazm = aimAt(g,pl);
+    let t1=(tazm-g.azm)/C.cruiseDiv, t3=(tazm-(g.azm-PI2))/C.cruiseDiv;
+    if (Math.abs(t3)<Math.abs(t1)) t1=t3;
+    g.speed = C.maxSpeed*(PI-Math.abs(t1)*C.cruiseDiv)/PI;
+    if (Math.abs(t1)>C.rot0) t1=sign(C.rot0,t1);
+    g.rotate=t1;
+  }
+
+  const scrot = g.rotate/C.rot0*C.maxSpeed;
+  const sctot = Math.hypot(g.speed,scrot);
+  if (sctot>C.maxSpeed){ const sc=C.maxSpeed/sctot; g.speed*=sc; g.rotate*=sc; }
+
+  if (pl.alive && g.fcount>10 && g.ecount>C.ecountThresh && !stillThere(g.salvo)){
+    g.fcount=0;
+    predictAndFire(g, pl, C.tol);
+  }
+}
+const TANK_CFG = { maxSpeed:8.0, rot0:0.030, phase2:45, clear1:90, retargetDiv:5,
+                    pcountThresh:10, cruiseDiv:10, ecountThresh:100, tol:BMT_TOL,
+                    pcountInit:5, fcountInit:5 };
+const SUPER_CFG = { maxSpeed:12.0, rot0:0.045, phase2:30, clear1:60, retargetDiv:5,
+                     pcountThresh:5, cruiseDiv:5, ecountThresh:50, tol:BMS_TOL,
+                     pcountInit:10, fcountInit:15 };
+
+function moveMissile(g, pl, first){
+  if (g.isNew){ g.ecount=0; g.pcount=0; g.isNew=false; }
+  g.rotate=0.0; g.pcount++;
+  g.z -= 25.0; if (g.z<=0.0) g.z=0.0;
+  if (g.blocked) g.z=90.0;
+  g.speed=35.0; if (g.z>91.0) g.speed=0.0;
+  if (g.pcount>=12){
+    g.pcount=0;
+    let t1;
+    if (g.proy>60.0){
+      const tazm = aimAt(g,pl);
+      t1 = tazm-g.azm;
+      let t3 = tazm-(g.azm-PI2);
+      if (Math.abs(t3)<Math.abs(t1)) t1=t3;
+      if (!first){
+        let dt1 = frand()*0.5;
+        dt1 = sign(dt1,t1);
+        if (frand()>0.8) dt1=-dt1;
+        t1 += dt1;
+      }
+      if (Math.abs(t1)>0.90) t1=sign(0.90,t1);
+    } else {
+      let tazm = pl.azm - PI;
+      if (tazm<0.0) tazm+=PI2; if (tazm>PI2) tazm-=PI2;
+      if (g.azm<0.0) g.azm+=PI2; if (g.azm>PI2) g.azm-=PI2;
+      t1 = tazm-g.azm;
+      let t2 = tazm-(g.azm-PI2);
+      if (Math.abs(t2)<Math.abs(t1)) t1=t2;
+      if (Math.abs(t1)>0.90) t1=sign(0.90,t1);
+    }
+    g.rotate=t1;
+  }
+}
+
+function moveCopter(g, pl){
+  g.pcount++;
+  if (!pl.alive){ g.pcount=0; g.canShoot=false; }
+  if (g.isNew){
+    g.pcount=10; g.ecount=0; g.canShoot=true; g.isNew=false;
+    g.orientation = frand()>0.5 ? PI/2.0 : -PI/2.0;
+  }
+  const s = g.salvo;
+  if (g.ecount<150 && g.range>400.0){
+    if (!stillThere(s)) g.z -= 5.0; else g.z += 5.0;
+  } else g.z += 5.0;
+  if (g.z<=40.0) g.z=40.0;
+  if (g.z>150.0) g.z=150.0;
+  if (g.blocked && g.z<90.0){ g.z=90.0; g.blocked=false; }
+  g.speed=20.0;
+  if (g.pcount>=10){
+    g.pcount=0;
+    if (g.range>400.0 && g.ecount<150){
+      const tazm = aimAt(g,pl);
+      let t1=(tazm-g.azm)/10.0, t3=(tazm-(g.azm-PI2))/10.0;
+      if (Math.abs(t3)<Math.abs(t1)) t1=t3;
+      if (Math.abs(t1)>0.06) t1=sign(0.06,t1);
+      g.rotate=t1;
+    } else {
+      let tazm=g.orientation;
+      if (tazm<0.0) tazm+=PI2; if (tazm>PI2) tazm-=PI2;
+      if (g.azm<0.0) g.azm+=PI2; if (g.azm>PI2) g.azm-=PI2;
+      let t1=(tazm-g.azm)/10.0, t2=(tazm-(g.azm-PI2))/10.0;
+      if (Math.abs(t2)<Math.abs(t1)) t1=t2;
+      if (Math.abs(t1)>0.06) t1=sign(0.06,t1);
+      g.rotate=t1; g.speed=30.0;
+    }
+  }
+  if (g.canShoot && g.z<50.0 && !stillThere(s)){
+    predictAndFire(g, pl, BMC_TOL);
+  }
+}
+
+function moveLander(g, pl){
+  g.pcount++;
+  if (g.pcount>20){
+    g.pcount=0;
+    if (g.range<=750.0){
+      const dx=g.x-pl.x, dy=g.y-pl.y;
+      let theta=Math.atan(dy/(Math.abs(dx)+1.0));
+      if (dx<=0.0) theta=PI-theta;
+      g.azm=theta;
+    }
+    if (frand()>=0.5) g.azm += frand()*PI/4.0;
+    else g.azm -= frand()*PI/4.0;
+    g.speed = frand()*20.0;
+  }
+}
+
+/* ===================================================================
+ * MAIN TICK  (port of the physics/collision/scoring body of main())
+ * =================================================================== */
+function dist2(a,b){ const dx=a.x-b.x, dy=a.y-b.y; return dx*dx+dy*dy; }
+
+function fireSalvo(){
+  const pl = W.player;
+  if (!pl.alive) return;
+  const s = pl.salvoPool.find(sp=>!stillThere(sp));
+  if (!s) return;
+  startLiving(s); s.isNew=false; s.ecount=0;
+  s.x=pl.x; s.y=pl.y; s.z=0.0; s.prox=0; s.proy=0;
+  s.azm=pl.azm; s.speed=40.0;
+}
+function centerJoystick(){ W.joyPos=[500,355]; applyJoystick(); }
+function toggleSens(){ W.sens=!W.sens; applyJoystick(); }
+function applyJoystick(){
+  const pl = W.player;
+  const ind = W.sens?0:1;
+  const sscale=[0.06,0.03], rscale=[0.00013,0.000065];
+  pl.speed = -(W.joyPos[1]-355.0)*sscale[ind];
+  pl.rotate = (W.joyPos[0]-500.0)*rscale[ind];
+  if (Math.abs(pl.speed)>10.0) pl.speed=sign(10.0,pl.speed);
+  if (Math.abs(pl.rotate)>0.030) pl.rotate=sign(0.030,pl.rotate);
+  const scrot=pl.rotate*10.0/0.030;
+  const sctot=Math.hypot(pl.speed,scrot);
+  if (sctot>10.0){ const sc=10.0/sctot; pl.speed*=sc; pl.rotate*=sc; }
+  pl.rotate = -pl.rotate;
+}
+
+function respawnPlayer(){
+  const pl = W.player;
+  pl.x=0; pl.y=0; pl.speed=0; pl.azm=0; pl.ca=1; pl.sa=0;
+  startLiving(pl);
+  W.messages.sight=false; W.sightFlag=false;
+  W.messages.blocked=false; W.blockedFlag=false;
+  W.messages.salvo=false; W.salvoFlag=false;
+  for (const g of W.enemies) Object.assign(g,{alive:false,exploding:false,erase:false,exerase:false,hasDC:false});
+}
+
+function tick(){
+  const o=W.opt, pl=W.player;
+  W.frame++;
+
+  applyJoystick();
+
+  if (pl.alive && !pl.blocked){
+    pl.azm += pl.rotate;
+    if (pl.azm>PI2) pl.azm -= PI2;
+    if (pl.azm<=0.0) pl.azm += PI2;
+    pl.ca=Math.cos(pl.azm); pl.sa=Math.sin(pl.azm);
+  }
+  if (pl.alive){ pl.x -= pl.sa*pl.speed; pl.y += pl.ca*pl.speed; }
+  else pl.speed=0.0;
+
+  for (const g of W.enemies) if (g.alive){
+    if (g.type2==='tank') moveGroundEnemy(g,pl,TANK_CFG);
+    else if (g.type2==='super') moveGroundEnemy(g,pl,SUPER_CFG);
+    else if (g.type2==='missile') moveMissile(g,pl,W.firstRun);
+    else if (g.type2==='copter') moveCopter(g,pl);
+  }
+  for (const g of W.landers) if (g.alive) moveLander(g,pl);
+
+  for (const g of W.enemies){
+    if (g.alive && !g.blocked) g.azm += g.rotate;
+    g.ca=Math.cos(g.azm); g.sa=Math.sin(g.azm);
+    g.x -= g.sa*g.speed; g.y += g.ca*g.speed;
+  }
+  for (const g of W.landers) if (g.alive){
+    g.ca=Math.cos(g.azm); g.sa=Math.sin(g.azm);
+    g.x -= g.sa*g.speed; g.y += g.ca*g.speed;
+  }
+
+  const all = [...W.enemies, ...W.landers, ...W.blocks, ...pl.salvoPool,
+               ...W.enemies.map(e=>e.salvo)];
+  for (const g of all) if (stillThere(g)) g.range = Math.sqrt(dist2(g,pl));
+
+  for (const g of [pl, ...W.enemies, ...W.landers]) { g.blocked=false; g.blockedByBlock=false; g.blockedByEnemy=false; }
+
+  for (const g of W.blocks){
+    if (g.range<BLOCK_SIZE){
+      pl.blockedByBlock=true; pl.blocked=true;
+      const dx=pl.x-g.x, dy=pl.y-g.y;
+      const diff=dy*pl.ca-dx*pl.sa;
+      let v=0;
+      if (pl.speed>0.0) v=diff+Math.sqrt(diff*diff+BLOCK_SIZE_SQ-g.range*g.range);
+      else if (pl.speed<0.0) v=diff-Math.sqrt(diff*diff+BLOCK_SIZE_SQ-g.range*g.range);
+      pl.x += pl.sa*v; pl.y -= pl.ca*v;
+    }
+    for (const g2 of W.enemies) if (g2.alive){
+      const d = dist2(g,g2);
+      if (d<BLOCK_SIZE_SQ){
+        g2.blockedByBlock=true; g2.blocked=true;
+        if (!(g2.type2==='missile'||g2.type2==='copter')){
+          const dx=g2.x-g.x, dy=g2.y-g.y;
+          const diff=dy*g2.ca-dx*g2.sa;
+          let v=0;
+          if (g2.speed>0.0) v=diff+Math.sqrt(diff*diff+BLOCK_SIZE_SQ-d);
+          else if (g2.speed<0.0) v=diff-Math.sqrt(diff*diff+BLOCK_SIZE_SQ-d);
+          g2.x += g2.sa*v; g2.y -= g2.ca*v;
+        }
+      }
+    }
+  }
+
+  for (const g of W.enemies)
+    if (g.alive && (g.blocked||pl.blocked)) g.range=Math.sqrt(dist2(g,pl));
+
+  for (const g of W.enemies)
+    if (g.alive && g.range<BLOCK_SIZE && !(g.type2==='missile'||g.type2==='copter')){
+      if (g.blocked){
+        pl.speed=0.0;
+        if (Math.abs(g.speed)<0.001) g.speed=sign(0.001,g.speed);
+      }
+      pl.blockedByEnemy=true; g.blockedByEnemy=true; pl.blocked=true; g.blocked=true;
+      const ddx=pl.speed*pl.sa-g.speed*g.sa, ddy=pl.speed*pl.ca-g.speed*g.ca;
+      const ddx2=ddx*ddx, ddy2=ddy*ddy;
+      const dx=pl.x-g.x, dy=pl.y-g.y;
+      const dif=ddy*dy-ddx*dx;
+      const alpha=(dif+Math.sqrt(Math.max(0,dif*dif+(BLOCK_SIZE_SQ-g.range*g.range)*(ddx2+ddy2))))/(ddx2+ddy2||1e-9);
+      pl.x += alpha*pl.speed*pl.sa; pl.y -= alpha*pl.speed*pl.ca;
+      g.x  += alpha*g.speed*g.sa;  g.y  -= alpha*g.speed*g.ca;
+    }
+
+  if (pl.blocked)
+    for (const g of [...pl.salvoPool, ...W.blocks]) if (g.alive) g.range=Math.sqrt(dist2(g,pl));
+
+  W.tankStranded=false;
+  for (const g of W.enemies){
+    g.ecount++;
+    if (g.alive){
+      if (g.range>2200.0) g.alive=false;
+      else if ((g.type2==='tank'||g.type2==='super') && g.ecount>TANK_STRAND_COUNT){
+        W.tankStranded=true;
+      }
+    }
+  }
+  for (const g of W.landers){
+    g.ecount++;
+    if (g.alive && g.range>2750.0) g.alive=false;
+  }
+  for (const g of W.blocks)
+    if (g.range>2200.0) g.alive=false;
+  for (const g of [...pl.salvoPool, ...W.enemies.map(e=>e.salvo)]){
+    g.ecount++;
+    if (g.alive && g.ecount>50) g.alive=false;
+  }
+
+  let newSalvoFlag=false;
+  const salvos = [...pl.salvoPool, ...W.enemies.map(e=>e.salvo)];
+  for (const g of salvos) if (g.alive){
+    if (g.owner!==pl) newSalvoFlag=true;
+    for (const g2 of W.blocks)
+      if (Math.abs(g2.x-g.x)<g2.criticalx && Math.abs(g2.y-g.y)<g2.criticaly){
+        startExploding(g); g.ecount=0;
+      }
+    for (const g2 of W.landers) if (g2.alive){
+      if (dist2(g,g2)<g2.criticalx){
+        startExploding(g); startExploding(g2); g.ecount=0; g2.ecount=0;
+        if (g.owner===pl) addScore(10000);
+      }
+    }
+    for (const g2 of W.enemies) if (g2.alive && g.owner!==g2){
+      const dx=g.x-g2.x, dy=g.y-g2.y;
+      const testx=Math.abs(dx*g2.ca+dy*g2.sa), testy=Math.abs(-dx*g2.sa+dy*g2.ca);
+      if (testx<g2.criticalx && testy<g2.criticaly &&
+          (!(g2.type2==='missile'||g2.type2==='copter') || g2.z<80.0)){
+        startExploding(g); startExploding(g2); g.ecount=0; g2.ecount=0;
+        if (g.owner===pl){
+          if (g2.type2==='super') addScore(5000);
+          else if (g2.type2==='missile'||g2.type2==='copter'){ addScore(5000); W.nummissile--; }
+          else addScore(3000);
+        }
+      }
+    }
+  }
+  W.newSalvoFlag = newSalvoFlag;
+
+  for (const g of W.enemies)
+    if ((g.type2==='missile'||g.type2==='copter') && g.alive)
+      for (const g2 of W.landers) if (g2.alive && dist2(g,g2)<g2.criticalx && g.z<80){
+        W.nummissile--;
+        startExploding(g); startExploding(g2); g.ecount=0; g2.ecount=0;
+      }
+
+  function addScore(v){
+    W.score += v;
+    const icheck = Math.floor(W.score/100000);
+    if (icheck>W.scorebase){ W.numleft=Math.min(4,W.numleft+1); W.scorebase=icheck; }
+  }
+
+  let newSight=false; W.aligned=false; W.landerSighted=false;
+  const threshold=0.7, landerThreshold=0.5;
+  for (const g of [...W.enemies, ...W.landers, ...W.blocks, ...salvos]){
+    if (g.alive||g.exploding){
+      g.seen=false;
+      if (g.range<2000.0){
+        const dx=g.x-pl.x, dy=g.y-pl.y;
+        g.proy=-dx*pl.sa+dy*pl.ca; g.prox=dx*pl.ca+dy*pl.sa;
+        const check=g.proy/(Math.abs(g.prox)+1.0);
+        if (check>threshold){
+          g.seen=true;
+          if (g.type==='enemy' && g.alive) newSight=true;
+          if (Math.abs(g.prox)<50 && g.alive && !(g.type==='block'||g.type==='salvo')) W.aligned=true;
+        }
+        if (g.type==='lander' && g.alive && check>landerThreshold){
+          W.landerSighted=true;
+          if (Math.abs(g.prox)<60) W.aligned=true;
+        }
+      }
+    }
+  }
+  W.sightFlag = newSight;
+
+  if (W.blockedFlag !== pl.blocked) W.blockedFlag = pl.blocked;
+  if (W.salvoFlag !== newSalvoFlag) W.salvoFlag = newSalvoFlag;
+
+  // player death: rammed by missile/copter
+  if (W.missilerun){
+    for (const g of W.enemies)
+      if (g.alive && (g.type2==='missile'||g.type2==='copter') && g.range<BLOCK_SIZE && g.z<80){
+        startExploding(g); pl.alive=false; W.dead=true; W.deadcount=0;
+      }
+  }
+  // player death: hit by enemy salvo
+  for (const g of W.enemies.map(e=>e.salvo))
+    if (g.alive && g.range<100.0 && Math.abs(g.prox)<pl.criticalx && Math.abs(g.proy)<pl.criticaly){
+      g.alive=false; pl.alive=false; W.dead=true; W.deadcount=0;
+    }
+
+  for (const g of [...W.enemies, ...W.landers]) if (g.exploding && g.ecount>=40) g.exploding=false;
+  for (const g of [...pl.salvoPool, ...W.enemies.map(e=>e.salvo)]) if (g.exploding && g.ecount>=20) g.exploding=false;
+
+  if (W.dead){
+    if (W.deadcount>50){
+      W.dead=false; W.numleft--;
+      if (W.numleft<0){ W.gameOver=true; return; }
+      if (W.missilerun){
+        W.nummissile -= 2;
+        if (W.nummissile<=0 && o.tanks){ W.missilerun=false; W.nextmissile=750*frand()+750; }
+      }
+      respawnPlayer();
+    }
+  }
+
+  if (pl.alive && o.missiles &&
+      (!o.tanks || o.copters || W.tankStranded || W.missilecount>W.nextmissile)){
+    if (!W.missilerun){
+      W.missilecount=0;
+      for (const g of W.enemies)
+        if (!(g.type2==='missile'||g.type2==='copter')){
+          g.alive=false; g.exploding=false;
+        }
+      W.nummissile = Math.floor(frand()*3*o.missiles)+1;
+      if (W.firstmissile) W.nummissile=1;
+      W.firstRun = W.firstmissile;
+      W.firstmissile=false;
+      W.missilerun=true;
+    }
+  }
+  if (W.missilerun && o.tanks && W.nummissile<=0){
+    W.missilerun=false; W.nextmissile=750*frand()+750;
+  }
+
+  if (!W.dead) placeObjects();
+  pl.isNew=false;
+
+  W.deadcount++;
+  if (!W.missilerun) W.missilecount++;
+}
+
+/* ===================================================================
+ * HORIZON STARFIELD DATA  (ported from drawhorizon()/c_graphics.c)
+ * =================================================================== */
+const NUMCLUST = [8,12,10,12,10,10];
+const CLUSTUX = [
+  [150,140,150,60,85,-100,-50,-150,0,0,0,0],
+  [150,50,75,0,0,7,0,-40,0,-110,-25,-150],
+  [150,115,115,105,115,-10,0,-125,-85,-150,0,0],
+  [150,130,150,10,25,-35,-35,0,-35,-140,-110,-150],
+  [150,-10,25,-70,-50,-125,-125,-100,-125,-150,0,0],
+  [150,100,140,0,0,-30,0,-120,-60,-150,0,0]
+];
+const CLUSTUY = [
+  [160,220,160,250,225,245,250,240,0,0,0,0],
+  [240,227,245,190,190,215,190,225,190,213,240,200],
+  [200,189,189,225,189,244,250,165,213,135,0,0],
+  [135,200,135,210,225,165,165,230,165,228,210,215],
+  [215,217,230,195,210,150,150,210,150,173,0,0],
+  [173,209,225,170,170,225,170,230,200,160,0,0]
+];
+function horizonPoints(azm){
+  const rdc=0.01745329251, scale=15.0;
+  let deg=azm/rdc; if (deg>=360.0) deg-=360.0;
+  let degmin=deg-30.0, degmax=deg+30.0;
+  let flag1=false, flag2=false;
+  if (degmin<0.0){ degmin+=360.0; flag1=true; }
+  if (degmax>=360.0){ degmax-=360.0; flag2=true; }
+  const indmin=Math.floor(degmin/20.0), indmax=Math.floor(degmax/20.0)+1;
+  const pts=[];
+  function emit(i, degOffset){
+    const center=10.0+i*20.0;
+    const xoff=(deg+degOffset-center)*scale+CX;
+    const i1=((i%6)+6)%6;
+    for (let j=0;j<NUMCLUST[i1];j++) pts.push([CLUSTUX[i1][j]+xoff, CLUSTUY[i1][j]-20]);
+  }
+  if (!flag1 && !flag2){ for(let i=indmin;i<indmax;i++) emit(i,0); }
+  else if (flag1){ for(let i=indmin;i<18;i++) emit(i,0); for(let i=0;i<indmax;i++) emit(i,0); }
+  else { for(let i=indmin;i<18;i++) emit(i,0); for(let i=0;i<indmax;i++) emit(i,-360.0); }
+  const moonVisible = deg<=360.0 && deg>=270.0;
+  const moonX = CX+(deg-315.0)*scale;
+  return {pts, moonVisible, moonX};
+}
+
+/* ===================================================================
+ * RENDERING
+ * =================================================================== */
+const VIEW = {x0:60,y0:64,x1:940,y1:436};
+let canvas, ctx;
+
+function beginScene(){
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(VIEW.x0,VIEW.y0,VIEW.x1-VIEW.x0,VIEW.y1-VIEW.y0);
+  ctx.clip();
+}
+function endScene(){ ctx.restore(); }
+
+function strokePoly(pts2d, pnumArr, mnumArr, color){
+  ctx.strokeStyle=color; ctx.lineWidth=1.4; ctx.beginPath();
+  let idx=0;
+  for (const n of pnumArr){
+    ctx.moveTo(pts2d[idx][0], pts2d[idx][1]);
+    for (let k=1;k<n;k++) ctx.lineTo(pts2d[idx+k][0], pts2d[idx+k][1]);
+    idx+=n;
+  }
+  for (const n of mnumArr){
+    const pairs=n>>1;
+    for (let k=0;k<pairs;k++){
+      ctx.moveTo(pts2d[idx][0], pts2d[idx][1]);
+      ctx.lineTo(pts2d[idx+1][0], pts2d[idx+1][1]);
+      idx+=2;
+    }
+  }
+  ctx.stroke();
+}
+
+function spinStep(state, vars){
+  const temp=state.cta;
+  state.cta = state.cta*vars[0]-state.sta*vars[1];
+  state.sta = state.sta*vars[0]+temp*vars[1];
+}
+
+function fadeFor(range, baseColor){
+  const t = 1 - clamp(range/OUT_OF_DRAWING_RANGE, 0, 1);
+  return fadeColor(baseColor, t);
+}
+
+function drawBlock(g){
+  const shape = g.type2==='cube' ? SHAPES.cube : SHAPES.pyramid;
+  const pos={x:g.x,y:g.y,z:g.z};
+  const pts = projStatic(shape.verts,pos,W.player);
+  strokePoly(pts, shape.pnum, shape.mnum, fadeFor(g.range, COLORS[g.type2]));
+}
+function drawSalvo(g){
+  const pos={x:g.x,y:g.y,z:g.z};
+  const pts = projAzm(SHAPES.salvo.verts,pos,g.azm,W.player);
+  const col = g.owner===W.player ? COLORS.psalvo : COLORS.esalvo;
+  strokePoly(pts, SHAPES.salvo.pnum, SHAPES.salvo.mnum, col);
+}
+function drawTank(g, baseColor){
+  const pos={x:g.x,y:g.y,z:g.z};
+  spinStep(g.dcTurret, SHAPES.tankDish.spin);
+  const p1 = projPivotSpin(SHAPES.tankDish.verts,pos,g.dcTurret,g.azm,SHAPES.tankDish.pivot,W.player);
+  const p2 = projAzm(SHAPES.tankBody.verts,pos,g.azm,W.player);
+  const col = fadeFor(g.range, baseColor);
+  strokePoly(p1, SHAPES.tankDish.pnum, SHAPES.tankDish.mnum, col);
+  strokePoly(p2, SHAPES.tankBody.pnum, SHAPES.tankBody.mnum, col);
+}
+function drawSuper(g){
+  const pos={x:g.x,y:g.y,z:g.z};
+  const pts=projAzm(SHAPES.super.verts,pos,g.azm,W.player);
+  strokePoly(pts, SHAPES.super.pnum, SHAPES.super.mnum, fadeFor(g.range, COLORS.super));
+}
+function drawMissile(g){
+  const pos={x:g.x,y:g.y,z:g.z};
+  const pts=projAzm(SHAPES.missile.verts,pos,g.azm,W.player);
+  strokePoly(pts, SHAPES.missile.pnum, SHAPES.missile.mnum, fadeFor(g.range, COLORS.missile));
+}
+function drawCopter(g){
+  const pos={x:g.x,y:g.y,z:g.z};
+  spinStep(g.dcBlade, SHAPES.copterBlade.spin);
+  const p1=projSpin(SHAPES.copterBlade.verts,pos,g.dcBlade,W.player);
+  const p2=projAzm(SHAPES.copterBody.verts,pos,g.azm,W.player);
+  const col=fadeFor(g.range, COLORS.copter);
+  strokePoly(p1, SHAPES.copterBlade.pnum, SHAPES.copterBlade.mnum, col);
+  strokePoly(p2, SHAPES.copterBody.pnum, SHAPES.copterBody.mnum, col);
+}
+function drawLander(g){
+  const pos={x:g.x,y:g.y,z:g.z};
+  spinStep(g.dcSpin, SHAPES.lander.spin);
+  const pts=projSpin(SHAPES.lander.verts,pos,g.dcSpin,W.player);
+  strokePoly(pts, SHAPES.lander.pnum, SHAPES.lander.mnum, fadeFor(g.range, COLORS.lander));
+}
+
+/* ---- explosions: reuse the fragment tables, simple gravity sim ---- */
+function ensureFragDC(g, kind){
+  if (g.fragDC && g.fragDC.kind===kind) return;
+  const pieces = EXPLODE_PIECES[kind];
+  g.fragDC = { kind, pieces: pieces.map(p=>({
+    yoff:p.yoff, zoff:p.zoff, vars:p.vars, pnum:p.pnum, mnum:p.mnum, verts:p.verts,
+    posx: -p.yoff*g.sa, posy: p.yoff*g.sa, posz: g.z+p.zoff,
+    velx: frand()*20-10, vely: frand()*20-10, velz: 12.5+frand()*7.5,
+    cta:g.ca, sta:g.sa, ctp:1, stp:0
+  })) };
+  if (kind==='copter') g.fragDC.pieces[0].velz += 6.0;
+}
+function drawExplosion(g, kind){
+  ensureFragDC(g, kind);
+  const pl=W.player, gravity=1.0;
+  for (const dc of g.fragDC.pieces){
+    const dx=g.x+dc.posx-pl.x, dy=g.y+dc.posy-pl.y;
+    if (Math.hypot(dx,dy)<2000.0){
+      const prox=dx*pl.ca+dy*pl.sa, proy=-dx*pl.sa+dy*pl.ca;
+      if (proy/Math.abs(prox+1)>0.8){
+        const dxp=pl.x-g.x-dc.posx, dyp=pl.y-g.y-dc.posy, dzp=-dc.posz;
+        const xn=dxp*dc.cta+dyp*dc.sta;
+        const yn=-dxp*dc.sta*dc.ctp+dyp*dc.cta*dc.ctp+dzp*dc.stp;
+        const zn=dxp*dc.sta*dc.stp-dyp*dc.cta*dc.stp+dzp*dc.ctp;
+        const cn=pl.ca*dc.cta+pl.sa*dc.sta, sn=pl.sa*dc.cta-pl.ca*dc.sta;
+        const cp=dc.ctp, sp=-dc.stp;
+        const pts = dc.verts.map(([x,y,z])=>{
+          const rx=x-xn, ry=y-yn, rz=z-zn;
+          let prx=rx*cn+ry*sn*cp+rz*sn*sp;
+          let pry=-rx*sn+ry*cn*cp+rz*cn*sp;
+          if (pry<10) pry=10;
+          const prz=-ry*sp+rz*cp;
+          return [CX+prx/pry*FSCALE, CY-prz/pry*FSCALE];
+        });
+        strokePoly(pts, dc.pnum, dc.mnum, fadeFor(g.range, COLORS[kind]));
+      }
+    }
+    dc.posx+=dc.velx; dc.posy+=dc.vely; dc.velz-=gravity; dc.posz+=dc.velz;
+    if (dc.posz<-40.0){ dc.posz=-40.0; dc.velz*=-0.2; }
+    let t=dc.cta; dc.cta=dc.cta*dc.vars[0]-dc.sta*dc.vars[1]; dc.sta=dc.sta*dc.vars[0]+t*dc.vars[1];
+    t=dc.ctp; dc.ctp=dc.ctp*dc.vars[2]-dc.stp*dc.vars[3]; dc.stp=dc.stp*dc.vars[2]+t*dc.vars[3];
+  }
+}
+function drawLanderBlink(g){
+  if ((g.ccount|0)%3!==2){ drawLander(g); }
+  g.ccount=(g.ccount|0)+1;
+}
+function drawSalvoExplosion(g){
+  if (!g.fragDC){
+    g.fragDC={pieces:[]};
+    for (let j=0;j<5;j++) g.fragDC.pieces.push({
+      posx:0,posy:0,posz:0,
+      velx:frand()*20-10, vely:frand()*20-10, velz:-7.5-frand()*5
+    });
+  }
+  const pl=W.player, gravity=1.0;
+  const pts=[];
+  for (const dc of g.fragDC.pieces){
+    dc.posx+=dc.velx; dc.posy+=dc.vely; dc.velz+=gravity; dc.posz-=dc.velz;
+    const xmoff=dc.posx+g.x-pl.x, ymoff=dc.posy+g.y-pl.y, zmoff=dc.posz;
+    let mrx=xmoff*pl.ca+ymoff*pl.sa, mry=-xmoff*pl.sa+ymoff*pl.ca;
+    if (mry<10) mry=10;
+    const sx=CX+mrx/mry*FSCALE, sy=CY-zmoff/mry*FSCALE;
+    pts.push([sx,sy]);
+  }
+  const col = g.owner===W.player ? COLORS.psalvo : COLORS.esalvo;
+  ctx.strokeStyle=col; ctx.lineWidth=1.3; ctx.beginPath();
+  for (const [x,y] of pts){ ctx.moveTo(x,y); ctx.lineTo(x, y+2); }
+  ctx.stroke();
+}
+
+const CRACKS = [[190,75],[270,175],[270,175],[230,265],[240,243],[330,290],[310,280],[390,235],
+  [370,246],[380,195],[200,425],[290,365],[270,378],[300,325],[630,425],[560,335],[580,361],[626,295],
+  [570,348],[510,355],[520,354],[490,275],[500,301],[440,290],[810,75],[720,125],[720,125],[695,205],
+  [700,200],[590,210],[630,206],[620,256],[710,157],[780,245],[770,232],[730,305],[740,287],[760,315]];
+
+function drawCracksOverlay(){
+  ctx.strokeStyle = COLORS.cracks; ctx.lineWidth=2; ctx.beginPath();
+  for (let i=0;i<CRACKS.length;i+=2){
+    ctx.moveTo(CRACKS[i][0], CRACKS[i][1]);
+    ctx.lineTo(CRACKS[i+1][0], CRACKS[i+1][1]);
+  }
+  ctx.stroke();
+}
+
+function drawBezel(){
+  ctx.strokeStyle='#123322'; ctx.lineWidth=2;
+  ctx.strokeRect(VIEW.x0-6, VIEW.y0-6, (VIEW.x1-VIEW.x0)+12, (VIEW.y1-VIEW.y0)+12);
+  ctx.strokeRect(500-70,486,140,148);
+  ctx.beginPath(); ctx.moveTo(500,486); ctx.lineTo(500,634); ctx.stroke();
+}
+
+function drawCrosshair(aligned){
+  ctx.strokeStyle = aligned ? '#ffe27a' : COLORS.xhair;
+  ctx.lineWidth = aligned?2.2:1.3;
+  ctx.beginPath();
+  ctx.moveTo(CX,CY-45); ctx.lineTo(CX,CY-25);
+  ctx.moveTo(CX,CY+25); ctx.lineTo(CX,CY+45);
+  if (aligned){
+    ctx.moveTo(CX-25,CY-15); ctx.lineTo(CX,CY-25); ctx.lineTo(CX+25,CY-15);
+    ctx.moveTo(CX-25,CY+15); ctx.lineTo(CX,CY+25); ctx.lineTo(CX+25,CY+15);
+  } else {
+    ctx.moveTo(CX-25,CY-20); ctx.lineTo(CX-25,CY-15);
+    ctx.moveTo(CX+25,CY-20); ctx.lineTo(CX+25,CY-15);
+    ctx.moveTo(CX-25,CY+20); ctx.lineTo(CX-25,CY+15);
+    ctx.moveTo(CX+25,CY+20); ctx.lineTo(CX+25,CY+15);
+  }
+  ctx.stroke();
+}
+
+function drawRadar(){
+  const rx=500, ry=560, r=65;
+  ctx.strokeStyle=COLORS.scanner; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.arc(rx,ry,r,0,PI2); ctx.stroke();
+  W.scanAngle += 0.0872;
+  const sx=rx+60*Math.cos(W.scanAngle), sy=ry+60*Math.sin(W.scanAngle);
+  ctx.beginPath(); ctx.moveTo(rx,ry); ctx.lineTo(sx,sy); ctx.stroke();
+  ctx.fillStyle=COLORS.scanner;
+  const scale=0.03;
+  for (const g of W.enemies){
+    if (g.alive && g.range<=2000.0 && g.range!==0.0){
+      const dx=rx+g.prox*scale, dy=ry-g.proy*scale;
+      ctx.fillRect(dx-1,dy-1,3,3);
+    }
+  }
+}
+
+function drawJoystickIndicator(){
+  const jx=850, jy=560, r=65;
+  ctx.strokeStyle=COLORS.joystick; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.arc(jx,jy,r,0,PI2); ctx.stroke();
+  ctx.font='11px monospace'; ctx.fillStyle=COLORS.joystick; ctx.textAlign='center';
+  ctx.fillText('F', jx, jy-r-6);
+  ctx.fillText('B', jx, jy+r+14);
+  ctx.fillText('L', jx-r-10, jy+4);
+  ctx.fillText('R', jx+r+10, jy+4);
+  const pl=W.player;
+  const dotx = 35.0*(-pl.rotate/0.03)+jx;
+  const doty = -35.0*(pl.speed/10.0)+jy;
+  ctx.beginPath(); ctx.moveTo(jx,jy); ctx.lineTo(dotx,doty); ctx.stroke();
+  ctx.fillRect(dotx-3,doty-3,6,6);
+}
+
+function drawHUD(){
+  ctx.textAlign='left'; ctx.fillStyle=COLORS.text; ctx.font='bold 20px "Share Tech Mono",monospace';
+  ctx.fillText(String(W.score).padStart(7,'0'), 320, 500);
+  ctx.font='13px "Share Tech Mono",monospace'; ctx.fillStyle='#a6d8ba';
+  ctx.fillText('SCORE', 320, 483);
+
+  for (let i=0;i<W.numleft;i++){
+    const bx=340+i*34, by=520;
+    ctx.strokeStyle=COLORS.text; ctx.lineWidth=1.3;
+    ctx.strokeRect(bx,by,24,12);
+    ctx.beginPath(); ctx.moveTo(bx+4,by+12); ctx.lineTo(bx+4,by+16); ctx.moveTo(bx+20,by+12); ctx.lineTo(bx+20,by+16); ctx.stroke();
+  }
+  ctx.fillStyle='#a6d8ba'; ctx.font='13px monospace'; ctx.fillText('RESERVE', 340, 512);
+
+  ctx.strokeStyle = W.missilerun ? COLORS.text : '#204030';
+  ctx.lineWidth=1.4; ctx.strokeRect(150,505,90,26);
+  ctx.fillStyle = W.missilerun ? COLORS.text : '#91b89d';
+  ctx.font='bold 12px monospace'; ctx.textAlign='center';
+  ctx.fillText('MISSILE RUN', 195, 522);
+
+  ctx.strokeStyle = W.landerSighted ? COLORS.text : '#204030';
+  ctx.strokeRect(150,538,90,26);
+  ctx.fillStyle = W.landerSighted ? COLORS.text : '#91b89d';
+  ctx.fillText('LANDER', 195, 555);
+
+  ctx.textAlign='left'; ctx.fillStyle='#a6d8ba'; ctx.font='13px monospace';
+  ctx.fillText('GEAR', 700, 483);
+  ctx.strokeStyle=COLORS.joystick; ctx.strokeRect(700,490,40,20);
+  ctx.fillStyle=COLORS.joystick; ctx.font='bold 13px monospace'; ctx.textAlign='center';
+  ctx.fillText(W.sens?'H':'L', 720, 505);
+
+  ctx.textAlign='left'; ctx.fillStyle=COLORS.text; ctx.font='12px monospace';
+  let my=600;
+  if (W.sightFlag){ ctx.fillText('ENEMY TANK IN FIRING ARC', 150, my); my+=18; }
+  if (W.player.blocked){ ctx.fillText('MOVEMENT BLOCKED BY OBJECT', 150, my); my+=18; }
+  if (W.salvoFlag){ ctx.fillText('SALVO FIRED BY ENEMY', 150, my); my+=18; }
+}
+
+function render(){
+  ctx.fillStyle=COLORS.bg; ctx.fillRect(0,0,1000,700);
+  drawBezel();
+
+  beginScene();
+  ctx.strokeStyle=COLORS.horizon; ctx.lineWidth=1;
+  drawHorizonWithBoundaries(W.player.azm);
+  const {moonVisible, moonX} = horizonPoints(W.player.azm);
+  if (moonVisible){
+    ctx.strokeStyle=COLORS.moon; ctx.beginPath(); ctx.arc(moonX,105,20,0,PI2); ctx.stroke();
+  }
+
+  for (const g of W.blocks) if (g.alive && g.seen) drawBlock(g);
+
+  for (const g of W.enemies){
+    if (g.alive && g.seen){
+      if (g.type2==='tank') drawTank(g, COLORS.tank);
+      else if (g.type2==='super') drawSuper(g);
+      else if (g.type2==='missile') drawMissile(g);
+      else if (g.type2==='copter') drawCopter(g);
+    } else if (g.exploding){
+      drawExplosion(g, g.type2);
+    }
+    const s=g.salvo;
+    if (s.alive && s.seen) drawSalvo(s);
+    else if (s.exploding) drawSalvoExplosion(s);
+  }
+  for (const g of W.landers){
+    if (g.alive && g.seen) drawLander(g);
+    else if (g.exploding) drawLanderBlink(g);
+  }
+  for (const s of W.player.salvoPool){
+    if (s.alive && s.seen) drawSalvo(s);
+    else if (s.exploding) drawSalvoExplosion(s);
+  }
+
+  drawCrosshair(W.aligned);
+  if (W.dead) drawCracksOverlay();
+  endScene();
+
+  drawRadar();
+  drawJoystickIndicator();
+  drawHUD();
+
+  if (W.gameOver){
+    ctx.fillStyle='rgba(0,0,0,0.72)'; ctx.fillRect(0,0,1000,700);
+    ctx.textAlign='center'; ctx.fillStyle=COLORS.text;
+    ctx.font='bold 46px "Orbitron",sans-serif';
+    ctx.fillText('GAME OVER', 500, 300);
+    ctx.font='22px monospace';
+    ctx.fillText('FINAL SCORE '+W.score, 500, 350);
+    ctx.font='16px monospace'; ctx.fillStyle='#a6d8ba';
+    ctx.fillText('Click Quit to Setup, then Roll Out to play again', 500, 390);
+  } else if (W.paused){
+    ctx.fillStyle='rgba(0,0,0,0.5)'; ctx.fillRect(0,0,1000,700);
+    ctx.textAlign='center'; ctx.fillStyle=COLORS.text;
+    ctx.font='bold 34px "Orbitron",sans-serif';
+    ctx.fillText('PAUSED', 500, 260);
+  }
+}
+
+function drawHorizonWithBoundaries(azm){
+  const rdc=0.01745329251, scale=15.0;
+  let deg=azm/rdc; if (deg>=360.0) deg-=360.0;
+  let degmin=deg-30.0, degmax=deg+30.0;
+  let flag1=false, flag2=false;
+  if (degmin<0.0){ degmin+=360.0; flag1=true; }
+  if (degmax>=360.0){ degmax-=360.0; flag2=true; }
+  const indmin=Math.floor(degmin/20.0), indmax=Math.floor(degmax/20.0)+1;
+  function drawRange(from,to,degOffset){
+    for (let i=from;i<to;i++){
+      const center=10.0+i*20.0;
+      const xoff=(deg+degOffset-center)*scale+CX;
+      const i1=((i%6)+6)%6;
+      ctx.beginPath();
+      for (let j=0;j<NUMCLUST[i1];j++){
+        const x=CLUSTUX[i1][j]+xoff, y=CLUSTUY[i1][j]-20;
+        if (j===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+      }
+      ctx.stroke();
+    }
+  }
+  if (!flag1 && !flag2) drawRange(indmin,indmax,0);
+  else if (flag1){ drawRange(indmin,18,0); drawRange(0,indmax,0); }
+  else { drawRange(indmin,18,0); drawRange(0,indmax,-360.0); }
+}
+
+/* ===================================================================
+ * INPUT / LOOP / SETUP WIRING
+ * =================================================================== */
+let loopHandle = null;
+
+function canvasToVirtual(clientX, clientY){
+  const rect = canvas.getBoundingClientRect();
+  const vx = (clientX-rect.left)/rect.width*1000;
+  const vy = (clientY-rect.top)/rect.height*700;
+  return [vx,vy];
+}
+
+function startGame(opts){
+  W = initWorld(opts);
+  placeObjects();
+  W.player.isNew = false;
+
+  const pl=W.player;
+  pl.ca=Math.cos(pl.azm); pl.sa=Math.sin(pl.azm);
+  const all=[...W.enemies, ...W.landers, ...W.blocks];
+  for (const g of all) if (g.alive){
+    const dx=g.x-pl.x, dy=g.y-pl.y;
+    g.range=Math.sqrt(dx*dx+dy*dy);
+    g.proy=-dx*pl.sa+dy*pl.ca; g.prox=dx*pl.ca+dy*pl.sa;
+  }
+
+  document.getElementById('setupSection').style.display='none';
+  document.getElementById('gameSection').style.display='block';
+
+  const delayVal = Math.max(0, Math.min(10, opts.delay));
+  const intervalMs = Math.max(16, delayVal*12);
+  if (loopHandle) clearInterval(loopHandle);
+  loopHandle = setInterval(()=>{
+    if (W.paused) return;
+    if (!W.gameOver) tick();
+    render();
+  }, intervalMs);
+  render();
+}
+
+function stopGame(){
+  if (loopHandle){ clearInterval(loopHandle); loopHandle=null; }
+  document.getElementById('gameSection').style.display='none';
+  document.getElementById('setupSection').style.display='block';
+}
+
+function wireInput(){
+  canvas.addEventListener('mousemove', (e)=>{
+    if (!W) return;
+    W.joyPos = canvasToVirtual(e.clientX, e.clientY);
+  });
+  canvas.addEventListener('touchmove', (e)=>{
+    if (!W || !e.touches.length) return;
+    const t=e.touches[0];
+    W.joyPos = canvasToVirtual(t.clientX, t.clientY);
+    e.preventDefault();
+  }, {passive:false});
+  canvas.addEventListener('touchstart', (e)=>{
+    if (!W || !e.touches.length) return;
+    const t=e.touches[0];
+    W.joyPos = canvasToVirtual(t.clientX, t.clientY);
+    fireSalvo();
+    e.preventDefault();
+  }, {passive:false});
+
+  canvas.addEventListener('mousedown', (e)=>{
+    if (!W) return;
+    if (e.button===0) fireSalvo();
+    else if (e.button===1){ centerJoystick(); e.preventDefault(); }
+    else if (e.button===2){ toggleSens(); }
+  });
+  canvas.addEventListener('contextmenu', (e)=>e.preventDefault());
+
+  window.addEventListener('keydown', (e)=>{
+    if (!W) return;
+    if (e.key===' '){ centerJoystick(); e.preventDefault(); }
+    else if (e.key==='p' || e.key==='P') W.paused=true;
+    else if (e.key==='c' || e.key==='C') W.paused=false;
+    else if (e.key==='q' || e.key==='Q') stopGame();
+  });
+}
+
+function readOptions(){
+  return {
+    tanks: parseInt(document.getElementById('optTanks').value,10)||0,
+    missiles: parseInt(document.getElementById('optMissiles').value,10)||0,
+    blocks: parseInt(document.getElementById('optBlocks').value,10)||0,
+    landers: parseInt(document.getElementById('optLanders').value,10)||0,
+    delay: parseInt(document.getElementById('optDelay').value,10),
+    copters: document.getElementById('optCopters').checked
+  };
+}
+function setDefaults(){
+  document.getElementById('optTanks').value=1;
+  document.getElementById('optMissiles').value=1;
+  document.getElementById('optBlocks').value=8;
+  document.getElementById('optLanders').value=4;
+  document.getElementById('optDelay').value=5;
+  document.getElementById('optCopters').checked=false;
+}
+
+function init(){
+  canvas = document.getElementById('cv');
+  ctx = canvas.getContext('2d');
+  wireInput();
+
+  document.getElementById('btnDefaults').onclick = setDefaults;
+  document.getElementById('btnStart').onclick = ()=> startGame(readOptions());
+  document.getElementById('btnFire').onclick = ()=>{ if (W) fireSalvo(); };
+  document.getElementById('btnPause').onclick = ()=>{
+    if (!W) return;
+    W.paused = !W.paused;
+    document.getElementById('btnPause').textContent = W.paused ? 'Continue' : 'Pause';
+  };
+  document.getElementById('btnGear').onclick = ()=>{ if (W) toggleSens(); };
+  document.getElementById('btnQuit').onclick = ()=>{
+    stopGame();
+    document.getElementById('btnPause').textContent='Pause';
+  };
+}
+
+function boot(){ init(); }
+if (window.claude && window.claude.hot){
+  window.claude.hot.ready ? window.claude.hot.ready(boot) : boot();
+} else {
+  boot();
+}
+})();
+</script>

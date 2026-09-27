@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Hammurabi — Governor of Ancient Sumeria</title>
+<style>
+:root{--ink:#2b2117;--paper:#f3e7c6;--paper2:#e8d5a5;--accent:#7b321d;--gold:#b9852f;--green:#52623c;--shadow:rgba(42,28,13,.22)}
+*{box-sizing:border-box} body{margin:0;color:var(--ink);font-family:Georgia,"Times New Roman",serif;background:#b99863;background-image:radial-gradient(circle at 15% 20%,rgba(255,255,255,.18),transparent 25%),radial-gradient(circle at 80% 10%,rgba(71,45,19,.13),transparent 30%),linear-gradient(135deg,#b79057,#d3b77d 45%,#ad8750)}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.18;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.23'/%3E%3C/svg%3E")}
+.wrap{width:min(1120px,94vw);margin:28px auto 60px}.masthead{text-align:center;color:#3c2415;text-shadow:0 1px rgba(255,255,255,.4);margin-bottom:16px}.masthead .eyebrow{letter-spacing:.24em;text-transform:uppercase;font-size:.72rem;font-weight:bold}.masthead h1{font-size:clamp(2.5rem,6vw,5rem);margin:.08em 0 0;line-height:.95;letter-spacing:.06em}.masthead p{margin:.55rem 0;font-style:italic}
+.game{background:var(--paper);border:1px solid #72552f;box-shadow:0 18px 45px var(--shadow),inset 0 0 45px rgba(116,78,28,.12);position:relative}.game:before,.game:after{content:"◆";position:absolute;top:9px;color:#8a6331}.game:before{left:13px}.game:after{right:13px}.bar{display:flex;gap:10px;justify-content:space-between;align-items:center;padding:14px 18px;background:rgba(118,77,31,.08);border-bottom:1px solid #aa8b58}.year{font-weight:bold;text-transform:uppercase;letter-spacing:.12em}.progress{height:8px;flex:1;max-width:420px;background:#d5bf8e;border:1px solid #aa8b58}.progress i{display:block;height:100%;width:10%;background:var(--accent);transition:width .25s}.reset{font:inherit;background:transparent;border:1px solid #85653b;padding:6px 10px;color:var(--ink);cursor:pointer}.reset:hover{background:#ead9b2}
+.content{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(280px,.65fr);gap:0}.main{padding:26px 30px 34px;border-right:1px solid #b89b67}.side{padding:24px;background:rgba(177,137,72,.08)}
+.report{border-bottom:3px double #9d7d49;padding-bottom:18px;margin-bottom:22px}.report h2{font-size:1.45rem;margin:0 0 10px;color:var(--accent)}.report p{font-size:1.08rem;line-height:1.55;margin:.25em 0}.event{margin-top:10px;padding:10px 12px;border-left:4px solid var(--accent);background:#ead8ad;font-weight:bold}.event.good{border-color:var(--green)}
+.market{font-size:1.1rem;padding:10px 12px;background:#e4cf9f;border:1px solid #b99a63;margin-bottom:18px}.market strong{color:var(--accent);font-size:1.25em}.decision h3{margin:.2em 0 .35em;font-size:1.45rem}.hint{font-size:.9rem;color:#6c5940;margin:0 0 14px;line-height:1.45}.row{display:grid;grid-template-columns:1fr 150px;gap:12px;align-items:center;padding:10px 0;border-bottom:1px dotted #b99d6e}.row label{font-weight:bold}.row small{display:block;font-weight:normal;color:#6d5b43;margin-top:3px}.row input{width:100%;font:inherit;font-size:1.05rem;padding:9px;border:1px solid #947443;background:#fff9e8;color:#2b2117;text-align:right}.row input:focus{outline:2px solid #a87535;outline-offset:1px}.actions{display:flex;align-items:center;gap:14px;margin-top:20px}.go{font:700 1rem Georgia,serif;letter-spacing:.06em;text-transform:uppercase;background:var(--accent);color:#fff5dc;border:0;padding:12px 18px;cursor:pointer;box-shadow:0 3px 0 #4f1d10}.go:hover{filter:brightness(1.08)}.go:active{transform:translateY(2px);box-shadow:0 1px 0 #4f1d10}.error{color:#8a1f14;font-weight:bold;min-height:1.2em}
+.stats h3,.chronicle h3{font-size:.95rem;text-transform:uppercase;letter-spacing:.12em;border-bottom:1px solid #9f7e49;padding-bottom:7px;margin:0 0 10px}.stat{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px dotted #b99d6e}.stat b{font-variant-numeric:tabular-nums}.chronicle{margin-top:25px}.log{max-height:300px;overflow:auto;padding-right:4px}.log p{font-size:.85rem;line-height:1.35;margin:0;padding:8px 0;border-bottom:1px dotted #c0a779}.log strong{color:var(--accent)}
+.rules{margin-top:24px;font-size:.84rem;line-height:1.5;color:#665238}.rules summary{cursor:pointer;font-weight:bold;text-transform:uppercase;letter-spacing:.08em}.ending{text-align:center;padding:28px 15px}.ending .seal{font-size:3.4rem}.ending h2{font-size:2rem;color:var(--accent);margin:.2em}.ending p{font-size:1.12rem;line-height:1.6;max-width:680px;margin:12px auto}.score{font-size:1.25rem;background:#e5d0a1;padding:14px;margin:18px auto;max-width:600px;border:1px solid #ae8c56}
+.footer{text-align:center;margin-top:12px;color:#4b3824;font-size:.78rem}.footer code{font-family:ui-monospace,monospace}
+@media(max-width:760px){.content{grid-template-columns:1fr}.main{border-right:0;border-bottom:1px solid #b89b67;padding:22px 18px}.side{padding:20px 18px}.bar{flex-wrap:wrap}.progress{order:3;max-width:none;flex-basis:100%}.row{grid-template-columns:1fr 115px}.masthead h1{font-size:2.7rem}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="masthead"><div class="eyebrow">Creative Computing Classic</div><h1>HAMMURABI</h1><p>Try your hand at governing ancient Sumeria for a ten-year term of office.</p></header>
+<section class="game">
+<div class="bar"><div class="year" id="yearLabel">Year 1 of 10</div><div class="progress"><i id="progress"></i></div><button class="reset" id="reset">New Reign</button></div>
+<div class="content" id="gameContent">
+<main class="main">
+<section class="report" id="report"></section>
+<div class="market">Land is trading at <strong id="price">—</strong> bushels per acre.</div>
+<section class="decision">
+<h3>Your decree, O Hammurabi</h3>
+<p class="hint">Enter whole numbers. Buy <em>or</em> sell land, feed your people, and decide how many acres to plant.</p>
+<div class="row"><label for="buy">Acres to buy<small>Leave at 0 if you wish to sell.</small></label><input id="buy" type="number" min="0" step="1" value="0"></div>
+<div class="row"><label for="sell">Acres to sell<small>Leave at 0 if you are buying.</small></label><input id="sell" type="number" min="0" step="1" value="0"></div>
+<div class="row"><label for="feed">Bushels to feed the people<small>20 bushels feed one person.</small></label><input id="feed" type="number" min="0" step="1" value="0"></div>
+<div class="row"><label for="plant">Acres to plant<small>2 acres require 1 bushel of seed; one person tends 10 acres.</small></label><input id="plant" type="number" min="0" step="1" value="0"></div>
+<div class="actions"><button class="go" id="decree">Issue Decree</button><div class="error" id="error"></div></div>
+</section>
+<details class="rules"><summary>How the kingdom works</summary><p>Each year you may buy or sell land, feed the population, and plant crops. Harvest yield, rats, immigrants, plague, and the price of land vary. Starve more than 45% of your people in a single year and you will be immediately impeached. Survive ten years and history will judge your reign.</p></details>
+</main>
+<aside class="side"><section class="stats"><h3>Royal Ledger</h3><div class="stat"><span>Population</span><b id="pop"></b></div><div class="stat"><span>Acres owned</span><b id="acres"></b></div><div class="stat"><span>Grain in store</span><b id="grain"></b></div><div class="stat"><span>Acres/person</span><b id="app"></b></div></section><section class="chronicle"><h3>Chronicle of the Reign</h3><div class="log" id="log"></div></section></aside>
+</div>
+</section>
+<div class="footer">A self-contained browser adaptation of the classic <code>HAMURABI</code> BASIC program.</div>
+</div>
+<script>
+(()=>{'use strict';
+const $=id=>document.getElementById(id), fmt=n=>Math.trunc(n).toLocaleString();
+let g;
+function rnd5(){return Math.floor(Math.random()*5)+1}
+function landPrice(){return Math.floor(Math.random()*10)+17}
+function init(){
+ g={year:1,pop:95,grain:2800,acres:1000,immigrants:5,starved:0,yield:3,rats:200,plague:false,totalStarved:0,avgStarvedPct:0,price:landPrice(),history:[]};
+ $('gameContent').innerHTML=originalContent; bind(); render();
+}
+function reportHTML(){
+ const r=g.year===1
+ ? `<h2>Hammurabi: I beg to report to you,</h2><p>You begin your reign over <strong>${fmt(g.pop)}</strong> people, <strong>${fmt(g.acres)}</strong> acres of land, and <strong>${fmt(g.grain)}</strong> bushels of grain.</p><p>Last year's harvest yielded <strong>${g.yield}</strong> bushels per acre. Rats consumed <strong>${fmt(g.rats)}</strong> bushels.</p>`
+ : `<h2>Hammurabi: I beg to report to you,</h2><p>In year ${g.year-1}, <strong>${fmt(g.starved)}</strong> people starved and <strong>${fmt(g.immigrants)}</strong> came to the city.</p><p>Population is now <strong>${fmt(g.pop)}</strong>. The city owns <strong>${fmt(g.acres)}</strong> acres.</p><p>You harvested <strong>${g.yield}</strong> bushels per acre. The rats ate <strong>${fmt(g.rats)}</strong> bushels. You now have <strong>${fmt(g.grain)}</strong> bushels in store.</p>`;
+ return r+(g.plague?`<div class="event">A horrible plague struck! Half the people died.</div>`:'');
+}
+function render(){
+ $('yearLabel').textContent=`Year ${g.year} of 10`; $('progress').style.width=`${g.year*10}%`; $('report').innerHTML=reportHTML(); $('price').textContent=g.price;
+ $('pop').textContent=fmt(g.pop);$('acres').textContent=fmt(g.acres);$('grain').textContent=fmt(g.grain);$('app').textContent=(g.acres/g.pop).toFixed(1);
+ $('feed').value=Math.min(g.grain,g.pop*20); $('plant').value=Math.min(g.acres,g.pop*10,Math.floor(g.grain*2)); $('buy').value=0;$('sell').value=0;$('error').textContent='';
+ $('log').innerHTML=g.history.length?g.history.slice().reverse().map(x=>`<p><strong>Year ${x.year}:</strong> ${x.text}</p>`).join(''):'<p>The scribes await your first decree.</p>';
+}
+function num(id){const v=Number($(id).value);return Number.isFinite(v)&&v>=0&&Number.isInteger(v)?v:null}
+function decree(){
+ let buy=num('buy'),sell=num('sell'),feed=num('feed'),plant=num('plant');
+ if([buy,sell,feed,plant].some(v=>v===null)) return err('Use non-negative whole numbers only.');
+ if(buy&&sell) return err('You may buy land or sell land in one year, not both.');
+ let acres=g.acres, grain=g.grain;
+ if(buy*g.price>grain) return err(`You have only ${fmt(grain)} bushels. You cannot afford that land.`);
+ acres+=buy;grain-=buy*g.price;
+ if(sell>=acres && sell>0) return err(`You own only ${fmt(acres)} acres. Sell fewer than you own.`); // original uses Q<A
+ acres-=sell;grain+=sell*g.price;
+ if(feed>grain) return err(`You have only ${fmt(grain)} bushels after the land transaction.`);
+ grain-=feed;
+ if(plant>acres) return err(`You own only ${fmt(acres)} acres.`);
+ if(Math.floor(plant/2)>grain) return err(`You have only ${fmt(grain)} bushels left for seed.`);
+ if(plant>=10*g.pop) return err(`You have only ${fmt(g.pop)} people to tend the fields. Plant fewer than ${fmt(10*g.pop)} acres.`); // faithful '<' test
+ grain-=Math.floor(plant/2);
+ // Original BASIC lines 511-542.
+ let yieldPerAcre=rnd5(), harvest=plant*yieldPerAcre, rats=0;
+ let c=rnd5(); if(c%2===0) rats=Math.floor(grain/c);
+ grain=grain-rats+harvest;
+ c=rnd5(); let immigrants=Math.floor(c*(20*acres+grain)/g.pop/100+1);
+ let fed=Math.floor(feed/20), starved=Math.max(0,g.pop-fed);
+ let plagueRoll=Math.floor(10*(2*Math.random()-.3));
+ // In the BASIC program Q>0 means no plague; Q<=0 halves population at next report.
+ let nextPop, plague=plagueRoll<=0;
+ if(starved===0){ nextPop=g.pop+immigrants; }
+ else { nextPop=fed+immigrants; }
+ let pct=starved*100/g.pop;
+ let oldYear=g.year;
+ g.avgStarvedPct=((oldYear-1)*g.avgStarvedPct+pct)/oldYear; g.totalStarved+=starved;
+ let text=`${fmt(starved)} starved; ${fmt(immigrants)} immigrants; harvest ${yieldPerAcre}/acre; rats ate ${fmt(rats)} bushels.`;
+ g.history.push({year:oldYear,text});
+ if(starved>.45*g.pop){return finish('impeached',starved,acres,nextPop,grain)}
+ if(plague) nextPop=Math.floor(nextPop/2);
+ g.pop=nextPop;g.acres=acres;g.grain=grain;g.immigrants=immigrants;g.starved=starved;g.yield=yieldPerAcre;g.rats=rats;g.plague=plague;g.year++;
+ if(g.year===11) return finish('term',starved,acres,nextPop,grain);
+ g.price=landPrice();render();
+}
+function err(s){$('error').textContent='Hammurabi: '+s}
+function finish(kind,starved,acres,pop,grain){
+ let l=acres/pop, verdict='';
+ if(kind==='impeached') verdict=`You starved ${fmt(starved)} people in one year! Due to this extreme mismanagement you have been impeached, thrown out of office, and declared a national fink.`;
+ else if(g.avgStarvedPct>33||l<7) verdict='Due to extreme mismanagement you have been impeached, thrown out of office, and declared a national fink.';
+ else if(g.avgStarvedPct>10||l<9) verdict='Your heavy-handed performance smacks of Nero and Ivan IV. The remaining people find you an unpleasant ruler and, frankly, hate your guts.';
+ else if(g.avgStarvedPct>3||l<10){let assassins=Math.floor(pop*.8*Math.random());verdict=`Your performance could have been somewhat better, but really wasn't too bad at all. ${fmt(assassins)} people would dearly like to see you assassinated, but we all have our trivial problems.`}
+ else verdict='A fantastic performance! Charlemagne, Disraeli, and Jefferson combined could not have done better!';
+ $('gameContent').innerHTML=`<div class="ending" style="grid-column:1/-1"><div class="seal">𒀭</div><h2>${kind==='impeached'?'Your Reign Is Over':'The Ten-Year Chronicle'}</h2>${kind==='term'?`<p>In your ten-year term, <strong>${g.avgStarvedPct.toFixed(1)}%</strong> of the population starved per year on average — a total of <strong>${fmt(g.totalStarved)}</strong> people.</p><p>You began with about 10 acres per person and ended with <strong>${l.toFixed(1)}</strong> acres per person.</p>`:''}<div class="score">${verdict}</div><p><strong>Final kingdom:</strong> ${fmt(pop)} people · ${fmt(acres)} acres · ${fmt(grain)} bushels</p><button class="go" id="again">Begin a New Reign</button></div>`;
+ $('yearLabel').textContent=kind==='term'?'Reign Complete':'Impeached';$('progress').style.width=kind==='term'?'100%':`${Math.min(g.year,10)*10}%`;$('again').onclick=init;
+}
+function bind(){$('decree').onclick=decree;$('reset').onclick=()=>{if(confirm('Abandon this reign and begin again?'))init()};['buy','sell','feed','plant'].forEach(id=>$(id).addEventListener('keydown',e=>{if(e.key==='Enter')decree()}))}
+const originalContent=$('gameContent').innerHTML;bind();render();
+})();
+</script>
+</body>
+</html>
