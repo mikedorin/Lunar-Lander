@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BASIC Playground — fr303</title>
+<meta name="description" content="Type or paste a vintage BASIC program and run it in your browser. The same interpreter runs the classic games on fr303.">
+<link rel="canonical" href="https://fr303.com/basic">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/fonts.css"><link rel="stylesheet" href="/terminal.css">
+<style>
+.ed{width:100%;height:260px;resize:vertical;font:13px/1.4 'DM Mono',monospace;color:var(--paper);background:#0b120e;border:1px solid var(--line);border-radius:8px;padding:10px 12px;tab-size:4;white-space:pre;overflow:auto;text-transform:none}
+.ed:focus-visible{outline:2px solid var(--signal)}
+.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:8px 0 14px}
+select{font:inherit;font-size:13px;color:var(--paper);background:#1a2520;border:1px solid var(--line);border-radius:6px;padding:7px 8px;max-width:100%}
+.run{background:var(--signal);color:#101713;border-color:var(--signal);font-weight:600}
+.run:hover{background:#f0b867}
+details{margin-top:18px;border-top:1px solid var(--line);padding-top:12px}
+summary{cursor:pointer;font:600 22px 'Barlow Condensed',sans-serif;text-transform:uppercase}
+details p,details li{color:#c9cfc3;font-size:13px}
+code{color:var(--ink)}
+.dl a{margin-right:14px}
+</style>
+</head><body><div class="wrap">
+<div class="top"><a class="brandlink" href="/" aria-label="FR303 home"><svg class="logo-mark" viewBox="0 0 64 64" width="26" height="26" aria-hidden="true"><rect x="3" y="5" width="58" height="48" rx="9" fill="#101713" stroke="#e4a553" stroke-width="4"/><path d="M16 20l14 10-14 10" fill="none" stroke="#b8f5c8" stroke-width="5" stroke-linecap="square"/><rect x="36" y="37" width="14" height="5" fill="#e4a553"/><path d="M20 59h24" stroke="#e4a553" stroke-width="4"/></svg><span>FR<b>303</b></span></a><a class="crumb" href="/">&larr; All games</a><a class="crumb" href="/credits">Credits</a></div>
+<h1>BASIC Playground</h1>
+<p class="sub">Write or paste a vintage-style BASIC program and run it. This is the same interpreter that runs the BASIC games on this site.</p>
+<label for="src" class="sub" style="display:block;margin-bottom:6px">Program (line numbers required)</label>
+<textarea class="ed" id="src" spellcheck="false" autocapitalize="characters" autocomplete="off"></textarea>
+<div class="bar">
+  <button type="button" class="run" id="run">&#9654; Run</button>
+  <button type="button" id="stop">Stop</button>
+  <label class="lbl" for="sample" style="color:var(--muted);font-size:12px">Load:</label>
+  <select id="sample"></select>
+  <button type="button" id="dl">Download .bas</button>
+</div>
+<div class="screen"><pre id="out" aria-live="polite" aria-label="Program output" tabindex="0"></pre></div>
+<div class="quick" id="quick"></div>
+<form class="inputrow" id="form" autocomplete="off"><input id="in" aria-label="Your answer" autocapitalize="characters" spellcheck="false" disabled><button type="submit">Enter</button></form>
+
+<details>
+<summary>Language notes</summary>
+<ul>
+<li>Statements: <code>PRINT</code> (with <code>TAB</code>, <code>SPC</code>, <code>,</code> and <code>;</code>), <code>INPUT</code>, <code>LET</code>, <code>IF…THEN</code>, <code>GOTO</code>, <code>GOSUB/RETURN</code>, <code>ON…GOTO/GOSUB</code>, <code>FOR/NEXT/STEP</code>, <code>DIM</code>, <code>READ/DATA/RESTORE</code>, <code>DEF FN</code>, <code>REM</code>, <code>STOP</code>, <code>END</code>.</li>
+<li>Functions: <code>ABS ATN COS EXP INT LOG RND SGN SIN SQR TAN</code> and <code>LEFT$ RIGHT$ MID$ LEN STR$ VAL CHR$ ASC</code>.</li>
+<li>Extras not in the old books: <code>CLS</code> clears the screen, <code>PAUSE n</code> waits n milliseconds.</li>
+<li>Numbers print the classic way (leading space for the sign). Comparisons give -1 for true and 0 for false. Text typed into INPUT is upper-cased.</li>
+<li>Programs run entirely in your browser. Nothing you type here is sent anywhere or saved.</li>
+</ul>
+<p class="dl"><a href="/basic.js" download>Download basic.js</a><a href="/basic.js">View source</a></p>
+<p>Listings for each BASIC game are in the Load menu, so you can read them, change them and run your changes.</p>
+</details>
+<footer>Runs in your browser &middot; <a href="/credits">credits</a></footer>
+</div>
+<script src="/basic.js"></script>
+<script>
+(function(){
+'use strict';
+var $=function(i){return document.getElementById(i)};
+var B=window.FR303Basic, term=new B.Terminal({out:$('out'),form:$('form'),input:$('in'),quick:$('quick')}), interp=null;
+var mine={
+ hello:['Hello, world',
+'10 PRINT "WHAT IS YOUR NAME";\n20 INPUT N$\n30 PRINT "HELLO, ";N$;"!"\n40 FOR I=1 TO 5\n50 PRINT TAB(I*2);"*"\n60 NEXT I\n70 END'],
+ times:['Times table',
+'10 PRINT "TIMES TABLE"\n20 FOR R=1 TO 9\n30 FOR C=1 TO 9\n40 PRINT TAB(C*4-LEN(STR$(R*C)));R*C;\n50 NEXT C\n60 PRINT\n70 NEXT R'],
+ guess:['Guess the number',
+'10 N=INT(RND(1)*100)+1\n20 T=0\n30 PRINT "I AM THINKING OF A NUMBER FROM 1 TO 100."\n40 INPUT "YOUR GUESS";G\n50 T=T+1\n60 IF G<N THEN PRINT "TOO LOW": GOTO 40\n70 IF G>N THEN PRINT "TOO HIGH": GOTO 40\n80 PRINT "GOT IT IN";T;"GUESSES!"'],
+ fib:['Fibonacci',
+'10 A=0: B=1\n20 FOR I=1 TO 20\n30 PRINT A;\n40 C=A+B: A=B: B=C\n50 NEXT I\n60 PRINT'],
+ sine:['Sine wave',
+'10 FOR X=0 TO 40\n20 PRINT TAB(20+18*SIN(X/3));"*"\n30 NEXT X']
+};
+var games=[['ftball','Football vs. Computer'],['lem','Lunar Module (LEM)'],['rocket','Rocket Landing'],['hexapawn','Hexapawn'],['life','Life'],['bagels','Bagels'],['hurkle','Hurkle'],['mugwump','Mugwump'],['nim','Nim'],['hi-lo','Hi-Lo'],['awari','Awari'],['mastermind','Mastermind']];
+var sel=$('sample'), h='<option value="">Choose a program…</option><optgroup label="Starter programs">';
+Object.keys(mine).forEach(function(k){h+='<option value="m:'+k+'">'+mine[k][0]+'</option>'});
+h+='</optgroup><optgroup label="Game listings (read, edit, run)">';
+games.forEach(function(g){h+='<option value="g:'+g[0]+'">'+g[1]+'</option>'});
+sel.innerHTML=h+'</optgroup>';
+function load(v){
+  if(!v)return;
+  if(v[0]==='m'){$('src').value=mine[v.slice(2)][1]+'\n';return;}
+  $('src').value='REM loading…';
+  fetch('/listings/'+v.slice(2)+'.bas').then(function(r){if(!r.ok)throw 0;return r.text()}).then(function(t){$('src').value=t;$('src').scrollTop=0})
+   .catch(function(){$('src').value='REM could not load that listing'});
+}
+sel.addEventListener('change',function(){load(sel.value)});
+function stop(){if(interp){interp.halt();interp=null}}
+function run(){
+  stop(); term.clear();
+  try{interp=new B.Basic($('src').value,term)}catch(e){term.write('?'+e.message+'\n');term.flush&&term.flush();return}
+  interp.run();
+}
+$('run').addEventListener('click',run);
+$('stop').addEventListener('click',function(){stop();term.write('\n*** STOPPED ***\n')});
+$('dl').addEventListener('click',function(){
+  var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([$('src').value],{type:'text/plain'}));a.download='program.bas';a.click();setTimeout(function(){URL.revokeObjectURL(a.href)},1000);
+});
+var q=new URLSearchParams(location.search).get('p');
+if(q&&games.some(function(g){return g[0]===q})){sel.value='g:'+q;load('g:'+q)}else{sel.value='m:hello';load('m:hello')}
+})();
+</script>
+</body></html>

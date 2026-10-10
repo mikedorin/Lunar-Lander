@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#101713">
   <meta name="description" content="Play classic computer games from the 1960s, 70s and 80s, rebuilt to run in your browser. No installs, no accounts.">
@@ -218,6 +219,18 @@
 
     .game-card:hover .card-arrow { transform: translateX(3px); }
 
+
+    .brandlink{display:inline-flex;align-items:center;gap:9px;color:var(--paper);text-decoration:none;font:800 24px/1 var(--display);letter-spacing:.04em}
+    .brandlink b{color:var(--signal);text-shadow:0 0 10px rgba(228,165,83,.55)}
+    .wordmark{display:block;width:min(430px,78vw);height:auto;margin:0 0 14px;filter:drop-shadow(0 0 14px rgba(228,165,83,.35))}
+    .wm-fr,.wm-303{font-family:var(--display);font-weight:800;font-size:128px}
+    .wm-fr{fill:#f3eee2}
+    .wm-303{fill:url(#lg)}
+    .section-note{margin:0 0 14px;max-width:640px;color:var(--muted);font-size:12px;line-height:1.6}
+    .catalog + .catalog{padding-top:6px}
+    .game-card.playground{--accent:#b8f5c8;background:rgba(184,245,200,.05)}
+    .game-card.playground h3{font-family:var(--mono);font-size:19px}
+
     footer {
       display: flex;
       justify-content: space-between;
@@ -273,89 +286,113 @@
 </head>
 <body>
   <header class="masthead">
-    <div class="brand"><span class="brand-mark" aria-hidden="true">◉</span><span class="brand-name">FR303</span></div>
-    <span class="masthead-meta">Classic games &nbsp; / &nbsp; 17 programs</span>
+    <a class="brandlink" href="/" aria-label="FR303 home"><svg class="logo-mark" viewBox="0 0 64 64" width="26" height="26" aria-hidden="true"><rect x="3" y="5" width="58" height="48" rx="9" fill="#101713" stroke="#e4a553" stroke-width="4"/><path d="M16 20l14 10-14 10" fill="none" stroke="#b8f5c8" stroke-width="5" stroke-linecap="square"/><rect x="36" y="37" width="14" height="5" fill="#e4a553"/><path d="M20 59h24" stroke="#e4a553" stroke-width="4"/></svg><span>FR<b>303</b></span></a>
+    <span class="masthead-meta">Classic games &nbsp; / &nbsp; 18 programs</span>
   </header>
 
   <main>
     <section class="intro" aria-labelledby="page-title">
       <div class="intro-copy">
+        <svg class="wordmark" viewBox="0 0 520 120" role="img" aria-label="FR303">
+          <defs><linearGradient id="lg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6c677"/><stop offset="1" stop-color="#c9781f"/></linearGradient>
+          <pattern id="sl" width="4" height="4" patternUnits="userSpaceOnUse"><rect width="4" height="1.4" fill="#101713" opacity=".55"/></pattern></defs>
+          <text x="0" y="98" class="wm-fr" textLength="230" lengthAdjust="spacingAndGlyphs">FR</text>
+          <text x="244" y="98" class="wm-303" textLength="270" lengthAdjust="spacingAndGlyphs">303</text>
+          <rect x="0" y="0" width="520" height="120" fill="url(#sl)"/>
+        </svg>
         <p class="eyebrow">Computer games from the 1960s – 80s</p>
         <h1 id="page-title">Choose your game</h1>
-        <p>Seventeen classic programs from the early days of computing, rebuilt to run in your browser. No installs, no accounts.</p>
+        <p>Eighteen classic programs from the early days of computing, rebuilt to run in your browser. No installs, no accounts.</p>
       </div>
     </section>
 
     <section class="catalog" aria-labelledby="catalog-title">
       <div class="catalog-heading">
-        <h2 id="catalog-title">Select a program</h2>
-        <span class="catalog-count">01—11 &nbsp; / &nbsp; ALL GAMES</span>
+        <h2 id="catalog-title">Original BASIC</h2>
+        <span class="catalog-count">12 programs &nbsp; / &nbsp; run from the book listings</span>
       </div>
-      <nav class="game-grid" aria-label="Available games">
+      <p class="section-note">These run the original 1970s BASIC source code, unchanged except for small fixes, on a BASIC interpreter written for this site. Every listing can be read in the playground.</p>
+      <nav class="game-grid" aria-label="Games that run original BASIC">
+        <a class="game-card" href="/football-vs-computer">
+          <span class="game-topline"><span class="game-type">Sports · Strategy</span><span class="game-number">01</span></span>
+          <h3>Football vs. Computer</h3>
+          <p>Call the plays against the computer in a classic 1978 football game.</p>
+          <span class="card-arrow" aria-hidden="true">→</span>
+        </a>
+<a class="game-card" href="/lunar-landings">
+          <span class="game-topline"><span class="game-type">Simulation · Space</span><span class="game-number">02</span></span>
+          <h3>Lunar Landings</h3>
+          <p>Two more moon landings: the comprehensive LEM and a 500-foot Rocket descent.</p>
+          <span class="card-arrow" aria-hidden="true">→</span>
+        </a>
+<a class="game-card" href="/hexapawn">
+          <span class="game-topline"><span class="game-type">Puzzle · Learning</span><span class="game-number">03</span></span>
+          <h3>Hexapawn</h3>
+          <p>Beat a tiny pawn-game machine that learns from every loss.</p>
+          <span class="card-arrow" aria-hidden="true">→</span>
+        </a>
+<a class="game-card" href="/life">
+          <span class="game-topline"><span class="game-type">Simulation · Math</span><span class="game-number">04</span></span>
+          <h3>Life</h3>
+          <p>Conway’s Game of Life. Draw a pattern and watch it evolve.</p>
+          <span class="card-arrow" aria-hidden="true">→</span>
+        </a>
+<a class="game-card" href="/puzzle-pack">
+          <span class="game-topline"><span class="game-type">Puzzle · Pack</span><span class="game-number">05</span></span>
+          <h3>Puzzle Pack</h3>
+          <p>Seven small classics: Bagels, Hurkle, Mugwump, Nim, Hi-Lo, Awari and Mastermind.</p>
+          <span class="card-arrow" aria-hidden="true">→</span>
+        </a>
+        <a class="game-card playground" href="/basic">
+          <span class="game-topline"><span class="game-type">Tool · Programming</span><span class="game-number">&gt;_</span></span>
+          <h3>BASIC Playground</h3>
+          <p>Type or paste your own BASIC program and run it. Open any game listing, change it and run it.</p>
+          <span class="card-arrow" aria-hidden="true">→</span>
+        </a>
+      </nav>
+    </section>
+
+    <section class="catalog" aria-labelledby="catalog-title2">
+      <div class="catalog-heading">
+        <h2 id="catalog-title2">JavaScript ports</h2>
+        <span class="catalog-count">6 programs &nbsp; / &nbsp; rebuilt for the browser</span>
+      </div>
+      <p class="section-note">These were rewritten in JavaScript with graphics, keyboard or touch controls.</p>
+      <nav class="game-grid" aria-label="Games rebuilt in JavaScript">
         <a class="game-card" href="/wireframe-front">
           <span class="game-topline"><span class="game-type">Arcade · Action</span><span class="game-number">01</span></span>
           <h3>Wireframe Front</h3>
           <p>Take the controls of a wireframe tank and hold the line against enemy armor.</p>
           <span class="card-arrow" aria-hidden="true">→</span>
         </a>
-        <a class="game-card" href="/football">
+<a class="game-card" href="/football">
           <span class="game-topline"><span class="game-type">Sports · Strategy</span><span class="game-number">02</span></span>
           <h3>Football</h3>
           <p>Two players, one device. Secretly call plays and outguess your opponent.</p>
           <span class="card-arrow" aria-hidden="true">→</span>
         </a>
-        <a class="game-card" href="/hammurabi">
+<a class="game-card" href="/hammurabi">
           <span class="game-topline"><span class="game-type">Strategy · History</span><span class="game-number">03</span></span>
           <h3>Hammurabi</h3>
           <p>Govern ancient Sumeria: manage land, grain, and the needs of your people.</p>
           <span class="card-arrow" aria-hidden="true">→</span>
         </a>
-        <a class="game-card" href="/lunar-lander">
+<a class="game-card" href="/lunar-lander">
           <span class="game-topline"><span class="game-type">Simulation · Space</span><span class="game-number">04</span></span>
           <h3>Lunar Lander</h3>
           <p>Manage your fuel and velocity to guide the module to a safe touchdown.</p>
           <span class="card-arrow" aria-hidden="true">→</span>
         </a>
-        <a class="game-card" href="/stock-market">
+<a class="game-card" href="/stock-market">
           <span class="game-topline"><span class="game-type">Simulation · Finance</span><span class="game-number">05</span></span>
           <h3>Stock Market</h3>
           <p>Trade through a volatile market and build your portfolio over 30 days.</p>
           <span class="card-arrow" aria-hidden="true">→</span>
         </a>
-        <a class="game-card" href="/galactic-sweep">
+<a class="game-card" href="/galactic-sweep">
           <span class="game-topline"><span class="game-type">Strategy · Sci-fi</span><span class="game-number">06</span></span>
           <h3>Galactic Sweep</h3>
           <p>Hunt raider warships across the galaxy and manage your ship before time runs out.</p>
-          <span class="card-arrow" aria-hidden="true">→</span>
-        </a>
-        <a class="game-card" href="/football-vs-computer">
-          <span class="game-topline"><span class="game-type">Sports · Strategy</span><span class="game-number">07</span></span>
-          <h3>Football vs. Computer</h3>
-          <p>Call the plays against the computer in a classic 1978 football game.</p>
-          <span class="card-arrow" aria-hidden="true">→</span>
-        </a>
-        <a class="game-card" href="/lunar-landings">
-          <span class="game-topline"><span class="game-type">Simulation · Space</span><span class="game-number">08</span></span>
-          <h3>Lunar Landings</h3>
-          <p>Two more moon landings: the comprehensive LEM and a 500-foot Rocket descent.</p>
-          <span class="card-arrow" aria-hidden="true">→</span>
-        </a>
-        <a class="game-card" href="/hexapawn">
-          <span class="game-topline"><span class="game-type">Puzzle · Learning</span><span class="game-number">09</span></span>
-          <h3>Hexapawn</h3>
-          <p>Beat a tiny pawn-game machine that learns from every loss.</p>
-          <span class="card-arrow" aria-hidden="true">→</span>
-        </a>
-        <a class="game-card" href="/life">
-          <span class="game-topline"><span class="game-type">Simulation · Math</span><span class="game-number">10</span></span>
-          <h3>Life</h3>
-          <p>Conway’s Game of Life. Draw a pattern and watch it evolve.</p>
-          <span class="card-arrow" aria-hidden="true">→</span>
-        </a>
-        <a class="game-card" href="/puzzle-pack">
-          <span class="game-topline"><span class="game-type">Puzzle · Pack</span><span class="game-number">11</span></span>
-          <h3>Puzzle Pack</h3>
-          <p>Seven small classics: Bagels, Hurkle, Mugwump, Nim, Hi-Lo, Awari and Mastermind.</p>
           <span class="card-arrow" aria-hidden="true">→</span>
         </a>
       </nav>

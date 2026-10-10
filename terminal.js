@@ -10,7 +10,18 @@
 
   function programText(id) { return document.getElementById('prog-' + id).textContent; }
 
+  const top = document.querySelector('.top');
+  if (top) {
+    const b = document.createElement('a'); b.className = 'brandlink'; b.href = '/'; b.setAttribute('aria-label', 'FR303 home');
+    b.innerHTML = '<svg class="logo-mark" viewBox="0 0 64 64" width="26" height="26" aria-hidden="true"><rect x="3" y="5" width="58" height="48" rx="9" fill="#101713" stroke="#e4a553" stroke-width="4"/><path d="M16 20l14 10-14 10" fill="none" stroke="#b8f5c8" stroke-width="5" stroke-linecap="square"/><rect x="36" y="37" width="14" height="5" fill="#e4a553"/><path d="M20 59h24" stroke="#e4a553" stroke-width="4"/></svg><span>FR<b>303</b></span>';
+    top.insertBefore(b, top.firstChild);
+  }
+  const foot = document.querySelector('footer');
+  const lst = document.createElement('a'); lst.textContent = 'view / edit this listing';
+  if (foot) { foot.appendChild(document.createTextNode(' \u00b7 ')); foot.appendChild(lst); }
+
   function start(id) {
+    lst.href = '/basic?p=' + id;
     if (interp) interp.halt();
     term.clear();
     current = id;

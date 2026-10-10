@@ -24,3 +24,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--signal);outline
 footer{color:var(--muted);font-size:11px;letter-spacing:.06em;text-transform:uppercase;margin-top:14px}
 .fr303-back{display:block;width:max-content;margin:14px auto 12px;font:12px/1 system-ui,sans-serif;color:#e8e8e0;background:rgba(0,0,0,.45);padding:7px 10px;border-radius:4px;text-decoration:none;opacity:.8}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+.brandlink{display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:var(--paper);font:800 24px/1 'Barlow Condensed',Impact,sans-serif;letter-spacing:.04em;margin-right:auto}
+.brandlink b{color:var(--signal);font-weight:800;text-shadow:0 0 10px rgba(228,165,83,.55)}
+.top .crumb{order:2}
