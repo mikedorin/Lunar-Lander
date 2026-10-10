@@ -425,7 +425,7 @@ function projPivotSpin(verts, pos, spinState, azm, pivotVars, pl){ // mode IV: p
 /* ===================================================================
  * OBJECT MODEL
  * =================================================================== */
-function stillThere(g){ return g.alive || g.exploding || g.erase || g.exerase; }
+function stillThere(g){ return g.alive || g.exploding; } // erase/exerase were display-refresh flags from the original and are never cleared here
 
 function newObject(type){
   return {
