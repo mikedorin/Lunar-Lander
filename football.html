@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Football — fr303</title><meta name="description" content="A two-player football strategy game for one device. Secretly call plays and outguess your opponent. A browser version of a classic 1978 BASIC game."><link rel="stylesheet" href="/fonts.css"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
-<style>.fr303-back{position:fixed;left:8px;bottom:8px;z-index:3;font:12px/1 system-ui,sans-serif;color:#e8e8e0;background:rgba(0,0,0,.62);padding:7px 10px;border-radius:4px;text-decoration:none;opacity:.75}footer a{color:inherit}.fr303-back:hover,.fr303-back:focus-visible{opacity:1;outline:1px solid currentColor}</style>
+<style>.fr303-back{display:block;width:max-content;margin:14px auto 12px;font:12px/1 system-ui,sans-serif;color:#e8e8e0;background:rgba(0,0,0,.45);padding:7px 10px;border-radius:4px;text-decoration:none;opacity:.8;position:relative;z-index:1}footer a{color:inherit}.fr303-back:hover,.fr303-back:focus-visible{opacity:1;outline:1px solid currentColor}</style>
 <style>
 :root{
   --turf-1:#0f2a20;
@@ -426,11 +426,11 @@ function renderYardMarks(){
   }
 }
 
-function printScoreLines(){
+function printScoreLines(scorer){
   print(`${teamLabel(1)} SCORE IS ${G.H[1]}`);
   print(`${teamLabel(2)} SCORE IS ${G.H[2]}`);
-  if (G.H[G.T] >= G.E){
-    print(`${teamLabel(G.T)} WINS! ★★★★★★★★★★★★★★★★`, 'hl');
+  if (scorer && G.H[scorer] >= G.E){
+    print(`${teamLabel(scorer)} WINS! ★★★★★★★★★★★★★★★★`, 'hl');
     return true;
   }
   return false;
@@ -756,7 +756,7 @@ async function stTouchdown(){
 async function stAddScore(){
   const T = G.T;
   G.H[T] += G._scoreQ;
-  const over = printScoreLines();
+  const over = printScoreLines(T);
   renderHUD();
   if (over) return stGameOver;
   G.T = opp(T);
@@ -770,7 +770,7 @@ async function stSafety(){
   const T = G.T;
   print(`SAFETY AGAINST ${teamLabel(T)}! ★★★★★★★★★★★★★★★★`, 'hl');
   G.H[opp(T)] += 2;
-  const over = printScoreLines();
+  const over = printScoreLines(opp(T));
   renderHUD();
   if (over) return stGameOver;
   const yes = await askYesNo(`${teamLabel(T)} — DO YOU WANT TO PUNT INSTEAD OF A KICKOFF?`);
