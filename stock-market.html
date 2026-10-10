@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Stock Market — Creative Computing Browser Edition</title>
+<title>Stock Market — fr303</title><meta name="description" content="Trade five fictional stocks over 30 days and try to build the biggest portfolio. A browser port of a classic BASIC game."><link rel="stylesheet" href="/fonts.css">
 <style>
 :root{--bg:#07100c;--panel:#0b1811;--line:#315b3d;--green:#8cff9e;--bright:#d9ffe0;--amber:#ffd47a;--red:#ff8c86;--muted:#7fa58a}
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 50% 0,#17351f 0,#07100c 45%,#020503 100%);color:var(--green);font-family:Consolas,"Courier New",monospace;min-height:100vh}
@@ -19,9 +19,9 @@ button{font:inherit;border:1px solid #4c8058;background:#102719;color:var(--gree
 .rank{font-size:28px;color:var(--amber);text-align:center;padding:8px}.scoreline{text-align:center;color:var(--muted);font-size:11px}.rule{font-size:11px;line-height:1.55;color:#a9c6af}
 .modalWrap{position:fixed;inset:0;background:#000c;display:none;align-items:center;justify-content:center;padding:15px;z-index:10}.modal{width:min(620px,100%);max-height:90vh;overflow:auto;background:#09170e;border:1px solid #568561;padding:20px}.modal h2{margin-top:0;color:white}.modal p,.modal li{font-size:12px;line-height:1.6;color:#b9d2be}.big{font-size:30px;color:var(--bright);text-align:center}.results{display:grid;grid-template-columns:1fr 1fr;gap:8px}.result{border:1px solid #294d32;padding:9px}.result span{display:block;color:var(--muted);font-size:9px}.result b{font-size:17px;color:white}
 @media(max-width:900px){main{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}table{font-size:11px}.company{display:none}#chart{height:260px}}
-</style></head>
+</style><style>.fr303-back{position:fixed;left:8px;bottom:8px;z-index:3;font:12px/1 system-ui,sans-serif;color:#e8e8e0;background:rgba(0,0,0,.62);padding:7px 10px;border-radius:4px;text-decoration:none;opacity:.75}footer a{color:inherit}.fr303-back:hover,.fr303-back:focus-visible{opacity:1;outline:1px solid currentColor}</style></head>
 <body>
-<header><div><h1>STOCK MARKET</h1><div class=sub>CREATIVE COMPUTING · MORRISTOWN, NEW JERSEY · 30-DAY CHALLENGE</div></div><div class=sub>1970 SIMULATION</div></header>
+<header><div><h1>STOCK MARKET</h1><div class=sub>CLASSIC BASIC SIMULATION · 30-DAY CHALLENGE</div></div><div class=sub>1970 SIMULATION</div></header>
 <main>
 <div>
 <section class=panel><div class=title>MARKET SUMMARY</div><div class=stats id=stats></div></section>
@@ -36,18 +36,18 @@ button{font:inherit;border:1px solid #4c8058;background:#102719;color:var(--gree
 <section class=panel><div class=title>CHALLENGE</div><div class=rank id=rank>DAY 1 / 30</div><div class=scoreline id=score></div></section>
 <section class=panel><div class=title>MARKET TAPE</div><div id=log></div></section>
 <section class=panel><div class=title>ORIGINAL MARKET RULES</div><div class=rule>
-Five fictional stocks begin near their original BASIC prices. All stocks share a temporary market trend, plus individual random price changes and occasional ±$10 shocks.<br><br>
+All companies, tickers and prices are fictional, and this is a game, not financial advice. Five stocks begin near their original BASIC prices. All stocks share a temporary market trend, plus individual random price changes and occasional ±$10 shocks.<br><br>
 A stock can fall to $0 and later rebound. Brokerage costs 1% of every day's total purchases and sales. Your objective is simple: finish Day 30 with as much wealth as possible.
 </div></section>
 </div></main>
 <div class=modalWrap id=mw><div class=modal id=modal></div></div>
 <script>
 const names=[
- ["IBM","INT. BALLISTIC MISSILES"],
- ["RCA","RED CROSS OF AMERICA"],
+ ["IBL","INT. BALLISTIC MISSILES"],
+ ["RCX","RED CROSS OF AMERICA"],
  ["LBJ","LICHTENSTEIN, BUMRAP & JOKE"],
- ["ABC","AMERICAN BANKRUPT CO."],
- ["CBS","CENSURED BOOKS STORE"]
+ ["ABK","AMERICAN BANKRUPT CO."],
+ ["CBK","CENSURED BOOKS STORE"]
 ];
 const colors=["#8cff9e","#78d8ff","#ffd47a","#ff8c86","#d59cff"];
 let prices,holdings,changes,cash,day,history,indexHistory,brokerage,totalVolume,trend,trendDays,n1,n2,i1,i2,e1,e2,finished;
@@ -69,7 +69,7 @@ function stockValue(){return round2(prices.reduce((a,p,i)=>a+p*holdings[i],0))}
 function assets(){return round2(cash+stockValue())}
 function render(){
  document.getElementById("stats").innerHTML=[
- ["NYSE AVERAGE",avg().toFixed(2)],["CASH",money(cash)],["STOCK ASSETS",money(stockValue())],["TOTAL ASSETS",money(assets())],["BROKERAGE PAID",money(brokerage)]
+ ["MARKET AVERAGE",avg().toFixed(2)],["CASH",money(cash)],["STOCK ASSETS",money(stockValue())],["TOTAL ASSETS",money(assets())],["BROKERAGE PAID",money(brokerage)]
  ].map(x=>`<div class=stat><span>${x[0]}</span><b>${x[1]}</b></div>`).join("");
  document.getElementById("stocks").innerHTML=names.map((n,i)=>`<tr><td><span class=ticker>${n[0]}</span><div class=company>${n[1]}</div></td><td class=num>${money(prices[i])}</td><td class="num ${changes[i]>=0?"up":"down"}">${changes[i]>=0?"+":""}${changes[i].toFixed(2)}</td><td class=num>${holdings[i]}</td><td class=num>${money(prices[i]*holdings[i])}</td><td class=num><input ${finished?"disabled":""} class=trade id=o${i} type=number step=1 value=0></td></tr>`).join("");
  document.getElementById("rank").textContent=finished?"MARKET CLOSED":`DAY ${day} / 30`;
@@ -90,7 +90,7 @@ function trade(){
  log(`DAY ${day}: ORDERS EXECUTED · TRANSACTIONS ${money(value)} · BROKERAGE ${money(fee)}`);
  updateMarket();day++;history.push([...prices]);indexHistory.push(avg());
  log(`********** END OF DAY ${day-1} TRADING **********`,"up");
- log(`NYSE AVERAGE ${avg().toFixed(2)} · TOTAL ASSETS ${money(assets())}`);
+ log(`MARKET AVERAGE ${avg().toFixed(2)} · TOTAL ASSETS ${money(assets())}`);
  if(day>30){finish();return}render();draw();
 }
 function updateMarket(){
@@ -130,4 +130,5 @@ function draw(){
 function show(s){document.getElementById("modal").innerHTML=s;document.getElementById("mw").style.display="flex"}function closeM(){document.getElementById("mw").style.display="none"}
 function instructions(){show(`<h2>HOW TO PLAY</h2><p>You begin with <b>$10,000</b>. Each trading day, enter the number of shares you wish to buy or sell for any of the five stocks. Positive numbers buy; negative numbers sell.</p><p>A <b>1% brokerage fee</b> is charged on the combined dollar value of purchases and sales. You cannot sell shares you do not own, and you cannot spend more cash than you have.</p><p>After you submit your orders, prices move according to the original BASIC simulation: a market-wide trend affects all five stocks, each stock receives a small random change, and occasional large ±$10 events occur.</p><p>The market trend changes periodically. Watching the price-history chart may help you decide whether the market is rising or falling—but the simulation remains unpredictable.</p><p>Your challenge lasts <b>30 trading days</b>. Maximize total assets: cash plus the current value of your stock holdings.</p><p>The original program recommended running for at least ten days to get a “feel” for the market. Good luck!</p><div class=buttons><button onclick=closeM()>RETURN TO MARKET</button></div>`)}
 window.addEventListener("resize",draw);newGame();
-</script></body></html>
+</script><a class="fr303-back" href="/">&larr; fr303 games</a>
+</body></html>

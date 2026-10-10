@@ -4,11 +4,13 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#101713">
-  <meta name="description" content="Explore most games from the Creative Computing Collection in this playable classic games archive.">
-  <title>Most Games from the Creative Computing Collection | Game Archive</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <meta name="description" content="Play classic computer games from the 1960s, 70s and 80s, rebuilt to run in your browser. No installs, no accounts.">
+  <link rel="canonical" href="https://fr303.com/">
+  <meta property="og:title" content="FR303 — Classic Computer Games">
+  <meta property="og:description" content="Classic computer games from the 1960s, 70s and 80s, playable in your browser.">
+  <meta property="og:url" content="https://fr303.com/">
+  <title>FR303 — Classic Computer Games in Your Browser</title>
+  <link rel="stylesheet" href="/fonts.css">
   <style>
     :root {
       color-scheme: dark;
@@ -56,7 +58,7 @@
       align-items: flex-end;
       overflow: hidden;
       padding: 38px 8vw 36px;
-      background: #1a2520;
+      background: radial-gradient(ellipse at 15% 130%, #2d4036 0%, #1a2520 45%, #101713 100%);
     }
 
     .intro img {
@@ -68,6 +70,13 @@
       object-position: center 42%;
       opacity: 0.48;
       animation: reveal 1s ease-out both;
+    }
+
+    .intro::before {
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(0deg, rgba(228,165,83,0.07) 0 1px, transparent 1px 7px);
+      content: '';
     }
 
     .intro::after {
@@ -259,17 +268,16 @@
 </head>
 <body>
   <header class="masthead">
-    <div class="brand"><span class="brand-mark" aria-hidden="true">◉</span><span class="brand-name">Most games from the Creative Computing Collection</span></div>
-    <span class="masthead-meta">Interactive game archive &nbsp; / &nbsp; 6 programs</span>
+    <div class="brand"><span class="brand-mark" aria-hidden="true">◉</span><span class="brand-name">FR303</span></div>
+    <span class="masthead-meta">Classic games &nbsp; / &nbsp; 6 programs</span>
   </header>
 
   <main>
     <section class="intro" aria-labelledby="page-title">
-      <img src="https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?auto=format&amp;fit=crop&amp;w=2200&amp;q=85" alt="" aria-hidden="true">
       <div class="intro-copy">
-        <p class="eyebrow">A collection of playable classics</p>
+        <p class="eyebrow">Computer games from the 1960s – 80s</p>
         <h1 id="page-title">Choose your game</h1>
-        <p>Six different worlds, one click away. Pick a program and jump straight into play.</p>
+        <p>Six classic programs from the early days of computing, rebuilt to run in your browser. No installs, no accounts.</p>
       </div>
     </section>
 
@@ -279,40 +287,40 @@
         <span class="catalog-count">01—06 &nbsp; / &nbsp; ALL GAMES</span>
       </div>
       <nav class="game-grid" aria-label="Available games">
-        <a class="game-card" href="c_zone.html">
+        <a class="game-card" href="/wireframe-front">
           <span class="game-topline"><span class="game-type">Arcade · Action</span><span class="game-number">01</span></span>
           <h3>Wireframe Front</h3>
-          <p>Take the controls of a vector tank and hold the line against enemy armor.</p>
+          <p>Take the controls of a wireframe tank and hold the line against enemy armor.</p>
           <span class="card-arrow" aria-hidden="true">→</span>
         </a>
-        <a class="game-card" href="Gridiron%20Signals.html">
+        <a class="game-card" href="/football">
           <span class="game-topline"><span class="game-type">Sports · Strategy</span><span class="game-number">02</span></span>
-          <h3>Gridiron Signals</h3>
-          <p>Read the field, call your plays, and outthink the opposition.</p>
+          <h3>Football</h3>
+          <p>Two players, one device. Secretly call plays and outguess your opponent.</p>
           <span class="card-arrow" aria-hidden="true">→</span>
         </a>
-        <a class="game-card" href="hammurabi.html">
+        <a class="game-card" href="/hammurabi">
           <span class="game-topline"><span class="game-type">Strategy · History</span><span class="game-number">03</span></span>
           <h3>Hammurabi</h3>
           <p>Govern ancient Sumeria: manage land, grain, and the needs of your people.</p>
           <span class="card-arrow" aria-hidden="true">→</span>
         </a>
-        <a class="game-card" href="lunar_lander.html">
+        <a class="game-card" href="/lunar-lander">
           <span class="game-topline"><span class="game-type">Simulation · Space</span><span class="game-number">04</span></span>
           <h3>Lunar Lander</h3>
           <p>Manage your fuel and velocity to guide the module to a safe touchdown.</p>
           <span class="card-arrow" aria-hidden="true">→</span>
         </a>
-        <a class="game-card" href="stock_market.html">
+        <a class="game-card" href="/stock-market">
           <span class="game-topline"><span class="game-type">Simulation · Finance</span><span class="game-number">05</span></span>
           <h3>Stock Market</h3>
           <p>Trade through a volatile market and build your portfolio over 30 days.</p>
           <span class="card-arrow" aria-hidden="true">→</span>
         </a>
-        <a class="game-card" href="super_starship.html">
+        <a class="game-card" href="/galactic-sweep">
           <span class="game-topline"><span class="game-type">Strategy · Sci-fi</span><span class="game-number">06</span></span>
-          <h3>Super Starship</h3>
-          <p>Command your starship, navigate the galaxy, and manage critical ship systems.</p>
+          <h3>Galactic Sweep</h3>
+          <p>Hunt raider warships across the galaxy and manage your ship before time runs out.</p>
           <span class="card-arrow" aria-hidden="true">→</span>
         </a>
       </nav>
@@ -320,8 +328,8 @@
   </main>
 
   <footer>
-    <a href="https://blog.adafruit.com/2022/06/16/david-ahl-places-all-his-classic-computing-publications-into-the-public-domain/" target="_blank" rel="noopener noreferrer">Most games from the Creative Computing Collection</a>
-    <span>Choose a program to begin</span>
+    <span>Independent hobby project</span>
+    <span><a href="/credits">Credits</a> &nbsp;·&nbsp; <a href="/privacy">Privacy</a></span>
   </footer>
 </body>
 </html>

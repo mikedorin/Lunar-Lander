@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Hammurabi — Governor of Ancient Sumeria</title>
+<title>Hammurabi — fr303</title><meta name="description" content="Govern ancient Sumeria: buy and sell land, feed your people and plant grain. A browser port of a classic BASIC game."><link rel="stylesheet" href="/fonts.css">
 <style>
 :root{--ink:#2b2117;--paper:#f3e7c6;--paper2:#e8d5a5;--accent:#7b321d;--gold:#b9852f;--green:#52623c;--shadow:rgba(42,28,13,.22)}
 *{box-sizing:border-box} body{margin:0;color:var(--ink);font-family:Georgia,"Times New Roman",serif;background:#b99863;background-image:radial-gradient(circle at 15% 20%,rgba(255,255,255,.18),transparent 25%),radial-gradient(circle at 80% 10%,rgba(71,45,19,.13),transparent 30%),linear-gradient(135deg,#b79057,#d3b77d 45%,#ad8750)}
@@ -18,10 +18,10 @@ body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.18;ba
 .footer{text-align:center;margin-top:12px;color:#4b3824;font-size:.78rem}.footer code{font-family:ui-monospace,monospace}
 @media(max-width:760px){.content{grid-template-columns:1fr}.main{border-right:0;border-bottom:1px solid #b89b67;padding:22px 18px}.side{padding:20px 18px}.bar{flex-wrap:wrap}.progress{order:3;max-width:none;flex-basis:100%}.row{grid-template-columns:1fr 115px}.masthead h1{font-size:2.7rem}}
 </style>
-</head>
+<style>.fr303-back{position:fixed;left:8px;bottom:8px;z-index:3;font:12px/1 system-ui,sans-serif;color:#e8e8e0;background:rgba(0,0,0,.62);padding:7px 10px;border-radius:4px;text-decoration:none;opacity:.75}footer a{color:inherit}.fr303-back:hover,.fr303-back:focus-visible{opacity:1;outline:1px solid currentColor}</style></head>
 <body>
 <div class="wrap">
-<header class="masthead"><div class="eyebrow">Creative Computing Classic</div><h1>HAMMURABI</h1><p>Try your hand at governing ancient Sumeria for a ten-year term of office.</p></header>
+<header class="masthead"><div class="eyebrow">Classic BASIC Game</div><h1>HAMMURABI</h1><p>Try your hand at governing ancient Sumeria for a ten-year term of office.</p></header>
 <section class="game">
 <div class="bar"><div class="year" id="yearLabel">Year 1 of 10</div><div class="progress"><i id="progress"></i></div><button class="reset" id="reset">New Reign</button></div>
 <div class="content" id="gameContent">
@@ -116,8 +116,9 @@ function finish(kind,starved,acres,pop,grain){
  $('yearLabel').textContent=kind==='term'?'Reign Complete':'Impeached';$('progress').style.width=kind==='term'?'100%':`${Math.min(g.year,10)*10}%`;$('again').onclick=init;
 }
 function bind(){$('decree').onclick=decree;$('reset').onclick=()=>{if(confirm('Abandon this reign and begin again?'))init()};['buy','sell','feed','plant'].forEach(id=>$(id).addEventListener('keydown',e=>{if(e.key==='Enter')decree()}))}
-const originalContent=$('gameContent').innerHTML;bind();render();
+const originalContent=$('gameContent').innerHTML;init();
 })();
 </script>
+<a class="fr303-back" href="/">&larr; fr303 games</a>
 </body>
 </html>

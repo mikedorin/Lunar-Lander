@@ -1,7 +1,6 @@
-<title>Wireframe Front</title>
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Wireframe Front — fr303</title><meta name="description" content="A first-person wireframe tank game in the style of classic vector arcade machines. Based on the open-source cbzone."><link rel="stylesheet" href="/fonts.css">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@500;700&display=swap');
-
 :root{
   --void:#06170f;
   --phosphor:#39ff8f;
@@ -79,7 +78,11 @@ button.big{font-size:1.05rem;padding:13px 26px;}
 
 #gameSection{display:none;}
 .stagewrap{
-  position:relative;width:100%;
+  position:relative;
+  width:min(100%, calc((100vh - 170px) * 1000 / 700));
+  width:min(100%, calc((100dvh - 170px) * 1000 / 700));
+  min-width:min(100%, 320px);
+  margin:0 auto;
   aspect-ratio:1000/700;
   background:#000;
   border:1px solid var(--steel-line);
@@ -89,6 +92,12 @@ button.big{font-size:1.05rem;padding:13px 26px;}
   cursor:crosshair;
 }
 canvas{display:block;width:100%;height:100%;}
+body.playing header, body.playing footer{display:none;}
+body.playing{padding-block:10px;}
+.stagewrap:fullscreen{width:100vw;height:100vh;aspect-ratio:auto;border:0;border-radius:0;display:flex;align-items:center;justify-content:center;}
+.stagewrap:-webkit-full-screen{width:100vw;height:100vh;aspect-ratio:auto;border:0;border-radius:0;display:flex;align-items:center;justify-content:center;}
+.stagewrap:fullscreen canvas{width:auto;height:auto;max-width:100%;max-height:100%;aspect-ratio:1000/700;}
+.stagewrap:-webkit-full-screen canvas{width:auto;height:auto;max-width:100%;max-height:100%;aspect-ratio:1000/700;}
 .crt-overlay{
   position:absolute;inset:0;pointer-events:none;
   background:repeating-linear-gradient(0deg, rgba(0,0,0,0.16) 0 1px, transparent 1px 3px);
@@ -111,6 +120,8 @@ footer{
 }
 [hidden]{display:none!important;}
 </style>
+<style>.fr303-back{position:fixed;left:8px;bottom:8px;z-index:3;font:12px/1 system-ui,sans-serif;color:#e8e8e0;background:rgba(0,0,0,.62);padding:7px 10px;border-radius:4px;text-decoration:none;opacity:.75}footer a{color:inherit}.fr303-back:hover,.fr303-back:focus-visible{opacity:1;outline:1px solid currentColor}</style>
+</head><body>
 
 <div class="wrap">
   <header>
@@ -152,13 +163,14 @@ footer{
     <div class="game-actions">
       <button class="fire" id="btnFire">Fire</button>
       <button class="ghost" id="btnPause">Pause</button>
+      <button class="ghost" id="btnFull">Full Screen</button>
       <button class="ghost" id="btnGear">Switch Gear</button>
       <button class="ghost" id="btnQuit">Quit to Setup</button>
     </div>
-    <div class="hint">Move your pointer over the screen to steer &amp; throttle &middot; click / tap to fire &middot; middle-click or Space centers the stick &middot; P pauses</div>
+    <div class="hint">Move your pointer over the screen to steer &amp; throttle &middot; click / tap to fire &middot; middle-click or Space centers the stick &middot; P pauses &middot; F full screen</div>
   </section>
 
-  <footer>Based on <code>cbzone</code>, originally created by Justin S. Revenaugh (MIT) in Fortran and translated/extended in C by Todd W. Mummert (CMU).</footer>
+  <footer>Based on <code>cbzone</code>, originally created in Fortran by Justin S. Revenaugh and translated/extended in C by Todd W. Mummert. <a href="/credits">Credits</a></footer>
 </div>
 
 <script>
@@ -768,7 +780,7 @@ function dist2(a,b){ const dx=a.x-b.x, dy=a.y-b.y; return dx*dx+dy*dy; }
 
 function fireSalvo(){
   const pl = W.player;
-  if (!pl.alive) return;
+  if (!pl.alive || W.paused || W.gameOver) return;
   const s = pl.salvoPool.find(sp=>!stillThere(sp));
   if (!s) return;
   startLiving(s); s.isNew=false; s.ecount=0;
@@ -823,6 +835,13 @@ function tick(){
     else if (g.type2==='copter') moveCopter(g,pl);
   }
   for (const g of W.landers) if (g.alive) moveLander(g,pl);
+
+  // Salvos fly straight along their firing azimuth (this step was missing,
+  // so shots stayed at the muzzle and could never hit anything).
+  for (const g of [...pl.salvoPool, ...W.enemies.map(e=>e.salvo)]) if (g.alive){
+    g.x -= Math.sin(g.azm)*g.speed;
+    g.y += Math.cos(g.azm)*g.speed;
+  }
 
   for (const g of W.enemies){
     if (g.alive && !g.blocked) g.azm += g.rotate;
@@ -1441,8 +1460,8 @@ let loopHandle = null;
 
 function canvasToVirtual(clientX, clientY){
   const rect = canvas.getBoundingClientRect();
-  const vx = (clientX-rect.left)/rect.width*1000;
-  const vy = (clientY-rect.top)/rect.height*700;
+  const vx = Math.max(0, Math.min(1000, (clientX-rect.left)/rect.width*1000));
+  const vy = Math.max(0, Math.min(700, (clientY-rect.top)/rect.height*700));
   return [vx,vy];
 }
 
@@ -1462,6 +1481,8 @@ function startGame(opts){
 
   document.getElementById('setupSection').style.display='none';
   document.getElementById('gameSection').style.display='block';
+  document.body.classList.add('playing');
+  setPaused(false);
 
   const delayVal = Math.max(0, Math.min(10, opts.delay));
   const intervalMs = Math.max(16, delayVal*12);
@@ -1478,20 +1499,38 @@ function stopGame(){
   if (loopHandle){ clearInterval(loopHandle); loopHandle=null; }
   document.getElementById('gameSection').style.display='none';
   document.getElementById('setupSection').style.display='block';
+  document.body.classList.remove('playing');
+  if (document.fullscreenElement && document.exitFullscreen) document.exitFullscreen();
+}
+
+function setPaused(p){
+  if (!W) return;
+  W.paused = p;
+  document.getElementById('btnPause').textContent = p ? 'Continue' : 'Pause';
+}
+function toggleFull(){
+  const el = document.getElementById('stageWrap');
+  const fs = document.fullscreenElement || document.webkitFullscreenElement;
+  if (fs){ (document.exitFullscreen || document.webkitExitFullscreen).call(document); }
+  else {
+    const req = el.requestFullscreen || el.webkitRequestFullscreen;
+    if (req) req.call(el);
+  }
 }
 
 function wireInput(){
-  canvas.addEventListener('mousemove', (e)=>{
+  const stage = document.getElementById('stageWrap');
+  stage.addEventListener('mousemove', (e)=>{
     if (!W) return;
     W.joyPos = canvasToVirtual(e.clientX, e.clientY);
   });
-  canvas.addEventListener('touchmove', (e)=>{
+  stage.addEventListener('touchmove', (e)=>{
     if (!W || !e.touches.length) return;
     const t=e.touches[0];
     W.joyPos = canvasToVirtual(t.clientX, t.clientY);
     e.preventDefault();
   }, {passive:false});
-  canvas.addEventListener('touchstart', (e)=>{
+  stage.addEventListener('touchstart', (e)=>{
     if (!W || !e.touches.length) return;
     const t=e.touches[0];
     W.joyPos = canvasToVirtual(t.clientX, t.clientY);
@@ -1499,19 +1538,24 @@ function wireInput(){
     e.preventDefault();
   }, {passive:false});
 
-  canvas.addEventListener('mousedown', (e)=>{
+  stage.addEventListener('mousedown', (e)=>{
     if (!W) return;
     if (e.button===0) fireSalvo();
     else if (e.button===1){ centerJoystick(); e.preventDefault(); }
     else if (e.button===2){ toggleSens(); }
   });
-  canvas.addEventListener('contextmenu', (e)=>e.preventDefault());
+  stage.addEventListener('contextmenu', (e)=>e.preventDefault());
+
+  stage.addEventListener('mouseleave', ()=>{ if (W) centerJoystick(); });
+  stage.addEventListener('touchend', ()=>{ if (W) centerJoystick(); });
+  stage.addEventListener('touchcancel', ()=>{ if (W) centerJoystick(); });
 
   window.addEventListener('keydown', (e)=>{
     if (!W) return;
     if (e.key===' '){ centerJoystick(); e.preventDefault(); }
-    else if (e.key==='p' || e.key==='P') W.paused=true;
-    else if (e.key==='c' || e.key==='C') W.paused=false;
+    else if (e.key==='p' || e.key==='P') setPaused(true);
+    else if (e.key==='c' || e.key==='C') setPaused(false);
+    else if (e.key==='f' || e.key==='F') toggleFull();
     else if (e.key==='q' || e.key==='Q') stopGame();
   });
 }
@@ -1542,13 +1586,12 @@ function init(){
 
   document.getElementById('btnDefaults').onclick = setDefaults;
   document.getElementById('btnStart').onclick = ()=> startGame(readOptions());
-  document.getElementById('btnFire').onclick = ()=>{ if (W) fireSalvo(); };
-  document.getElementById('btnPause').onclick = ()=>{
-    if (!W) return;
-    W.paused = !W.paused;
-    document.getElementById('btnPause').textContent = W.paused ? 'Continue' : 'Pause';
-  };
-  document.getElementById('btnGear').onclick = ()=>{ if (W) toggleSens(); };
+  document.getElementById('btnFire').onclick = (e)=>{ if (W) fireSalvo(); e.currentTarget.blur(); };
+  document.getElementById('btnPause').onclick = (e)=>{ if (W) setPaused(!W.paused); e.currentTarget.blur(); };
+  document.getElementById('btnFull').onclick = (e)=>{ toggleFull(); e.currentTarget.blur(); };
+  if (!(document.documentElement.requestFullscreen || document.documentElement.webkitRequestFullscreen))
+    document.getElementById('btnFull').style.display='none';
+  document.getElementById('btnGear').onclick = (e)=>{ if (W) toggleSens(); e.currentTarget.blur(); };
   document.getElementById('btnQuit').onclick = ()=>{
     stopGame();
     document.getElementById('btnPause').textContent='Pause';
@@ -1556,10 +1599,8 @@ function init(){
 }
 
 function boot(){ init(); }
-if (window.claude && window.claude.hot){
-  window.claude.hot.ready ? window.claude.hot.ready(boot) : boot();
-} else {
-  boot();
-}
+boot();
 })();
 </script>
+<a class="fr303-back" href="/">&larr; fr303 games</a>
+</body></html>

@@ -1,8 +1,7 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
-<title>Gridiron Signals</title>
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Football — fr303</title><meta name="description" content="A two-player football strategy game for one device. Secretly call plays and outguess your opponent. A browser version of a classic 1978 BASIC game."><link rel="stylesheet" href="/fonts.css"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
+<style>.fr303-back{position:fixed;left:8px;bottom:8px;z-index:3;font:12px/1 system-ui,sans-serif;color:#e8e8e0;background:rgba(0,0,0,.62);padding:7px 10px;border-radius:4px;text-decoration:none;opacity:.75}footer a{color:inherit}.fr303-back:hover,.fr303-back:focus-visible{opacity:1;outline:1px solid currentColor}</style>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
-
 :root{
   --turf-1:#0f2a20;
   --turf-2:#173e2f;
@@ -244,11 +243,12 @@ footer a{color:var(--gold);}
 
 [hidden]{display:none!important;}
 </style>
+</head><body>
 
 <div class="wrap">
   <header>
-    <h1>GRIDIRON SIGNALS</h1>
-    <div class="subtitle">a browser port of 1978's N.F.U. Football — no fortran used</div>
+    <h1>FOOTBALL</h1>
+    <div class="subtitle">a browser version of a classic 1978 BASIC game</div>
     <div class="hdr-actions">
       <button class="ghost small" id="btn-restart" hidden>Restart Game</button>
     </div>
@@ -327,7 +327,7 @@ footer a{color:var(--gold);}
     </div>
   </section>
 
-  <footer>Adapted from &ldquo;Football&rdquo; by Creative Computing, Morristown, New Jersey (1978) · plays run entirely in your browser</footer>
+  <footer>Adapted from a 1978 BASIC football game · plays run entirely in your browser · <a href="/credits">credits</a></footer>
 </div>
 
 <script>
@@ -835,12 +835,8 @@ $('btn-restart').onclick = ()=>{
 
 /* ---- keep viewers open across a redeploy ---- */
 function boot(){ /* static setup screen is already interactive; nothing to hydrate */ }
-if (window.claude && window.claude.hot){
-  window.claude.hot.ready ? window.claude.hot.ready(boot) : boot();
-} else {
-  boot();
-}
+boot();
 })();
 </script>
-
+<a class="fr303-back" href="/">&larr; fr303 games</a>
 </body></html>
